@@ -1,0 +1,68 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "schema": "https://schema.org/",
+    "sso": "https://github.com/api-evangelist/sso#",
+    "saml": "urn:oasis:names:tc:SAML:2.0:",
+    "oidc": "https://openid.net/connect/",
+
+    "SSOProvider": "schema:Organization",
+    "IdentityProvider": "sso:IdentityProvider",
+    "ServiceProvider": "sso:ServiceProvider",
+
+    "SAMLAssertion": "sso:SAMLAssertion",
+    "OIDCToken": "sso:OIDCToken",
+    "AuthorizationCode": "sso:AuthorizationCode",
+    "AccessToken": "sso:AccessToken",
+    "IDToken": "sso:IDToken",
+    "RefreshToken": "sso:RefreshToken",
+
+    "issuer": {
+      "@id": "schema:creator",
+      "@type": "@id"
+    },
+    "subject": "schema:identifier",
+    "nameId": "schema:identifier",
+    "email": "schema:email",
+    "name": "schema:name",
+    "given_name": "schema:givenName",
+    "family_name": "schema:familyName",
+    "picture": {
+      "@id": "schema:image",
+      "@type": "@id"
+    },
+
+    "notBefore": {
+      "@id": "schema:validFrom",
+      "@type": "schema:DateTime"
+    },
+    "notOnOrAfter": {
+      "@id": "schema:validThrough",
+      "@type": "schema:DateTime"
+    },
+    "expires_in": "schema:duration",
+    "scope": "sso:scope",
+    "audience": "sso:audience",
+    "nonce": "sso:nonce",
+
+    "authnContextClassRef": "sso:authenticationContext",
+    "authnInstant": {
+      "@id": "sso:authenticationTime",
+      "@type": "schema:DateTime"
+    },
+    "sessionIndex": "sso:sessionIndex",
+
+    "SAML": "sso:SAMLProtocol",
+    "OIDC": "sso:OIDCProtocol",
+    "OAuth2": "sso:OAuth2Protocol",
+
+    "AuthorizationCodeFlow": "sso:AuthorizationCodeFlow",
+    "ImplicitFlow": "sso:ImplicitFlow",
+    "ClientCredentialsFlow": "sso:ClientCredentialsFlow",
+
+    "SingleSignOn": "sso:SingleSignOn",
+    "SingleLogout": "sso:SingleLogout",
+    "AssertionConsumerService": "sso:AssertionConsumerService",
+    "JWKS": "sso:JSONWebKeySet"
+  }
+}

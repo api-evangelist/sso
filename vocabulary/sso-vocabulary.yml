@@ -1,0 +1,150 @@
+name: SSO Vocabulary
+description: >-
+  Vocabulary for Single Sign-On (SSO) technology covering authentication
+  protocols, identity federation, and token standards including SAML 2.0,
+  OpenID Connect, and OAuth 2.0.
+created: '2026-05-02'
+modified: '2026-05-02'
+terms:
+  - term: Single Sign-On
+    abbreviation: SSO
+    definition: >-
+      An authentication scheme that allows a user to log in once with a single
+      set of credentials to gain access to multiple related applications and
+      systems without re-authenticating for each.
+
+  - term: Identity Provider
+    abbreviation: IdP
+    definition: >-
+      A system entity that creates, maintains, and manages identity information
+      for principals while providing authentication services to relying party
+      applications. Examples include Okta, Microsoft Entra ID, and Google
+      Workspace.
+
+  - term: Service Provider
+    abbreviation: SP
+    definition: >-
+      An application or service that relies on an identity provider to
+      authenticate users. The SP consumes identity assertions from the IdP to
+      grant or deny access.
+
+  - term: Security Assertion Markup Language
+    abbreviation: SAML
+    definition: >-
+      An XML-based open standard for exchanging authentication and authorization
+      data between identity providers and service providers. SAML 2.0 is the
+      current version and is widely used in enterprise SSO implementations.
+
+  - term: OpenID Connect
+    abbreviation: OIDC
+    definition: >-
+      A simple identity layer on top of OAuth 2.0 that enables applications to
+      verify user identity based on authentication performed by an Authorization
+      Server. Returns user claims in JSON format via ID tokens and the UserInfo
+      endpoint.
+
+  - term: OAuth 2.0
+    definition: >-
+      An authorization framework that enables applications to obtain limited
+      access to user accounts on an HTTP service. OAuth 2.0 focuses on
+      authorization; OpenID Connect adds authentication on top of it.
+
+  - term: Access Token
+    definition: >-
+      A credential used to access protected resources. In OAuth 2.0 and OIDC,
+      access tokens are typically short-lived and represented as JWTs or opaque
+      strings.
+
+  - term: ID Token
+    definition: >-
+      A JWT-formatted token issued by an OpenID Provider containing claims about
+      the authenticated user. The ID token is the core identity artifact in
+      OpenID Connect.
+
+  - term: Refresh Token
+    definition: >-
+      A long-lived credential used to obtain new access tokens without requiring
+      the user to re-authenticate. Issued when the offline_access scope is
+      requested.
+
+  - term: Authorization Code
+    definition: >-
+      A short-lived, single-use code returned by the authorization endpoint that
+      the client exchanges at the token endpoint for access and ID tokens.
+
+  - term: PKCE
+    definition: >-
+      Proof Key for Code Exchange. An OAuth 2.0 security extension for public
+      clients (mobile apps, SPAs) that prevents authorization code interception
+      attacks using a code_verifier and code_challenge pair.
+
+  - term: JSON Web Token
+    abbreviation: JWT
+    definition: >-
+      A compact, URL-safe means of representing claims to be transferred between
+      parties. JWTs consist of a header, payload, and signature encoded in
+      base64url format.
+
+  - term: JWKS
+    definition: >-
+      JSON Web Key Set. A JSON data structure representing a set of public
+      cryptographic keys used to verify the signatures of tokens issued by an
+      OpenID Provider.
+
+  - term: Assertion Consumer Service
+    abbreviation: ACS
+    definition: >-
+      The SAML endpoint on the service provider that receives and processes SAML
+      Response messages from the identity provider during SSO flows.
+
+  - term: Single Logout
+    abbreviation: SLO
+    definition: >-
+      A SAML 2.0 feature that allows termination of all SSO sessions across
+      multiple service providers with a single logout action.
+
+  - term: Federation
+    definition: >-
+      The practice of linking identity information across multiple distinct
+      identity management systems. Federation enables SSO across organizational
+      boundaries.
+
+  - term: NameID
+    definition: >-
+      The SAML attribute that identifies the subject (user) of an assertion.
+      Common formats include email address, persistent identifier, and transient
+      identifier.
+
+  - term: Scope
+    definition: >-
+      In OAuth 2.0 and OIDC, scopes define the level of access that an
+      application requests. Standard OIDC scopes include openid, profile, email,
+      address, phone, and offline_access.
+
+  - term: Nonce
+    definition: >-
+      A cryptographic value used to associate a client session with an ID token
+      and to mitigate replay attacks. The nonce is included in the authorization
+      request and validated in the received ID token.
+
+  - term: State
+    definition: >-
+      An opaque value used to maintain state between the authorization request
+      and the callback. Used to prevent CSRF attacks in OAuth 2.0 flows.
+
+  - term: Redirect URI
+    definition: >-
+      The URI registered with the authorization server to which the authorization
+      response is sent after the user authenticates. Must be pre-registered and
+      exactly matched.
+
+  - term: Client ID
+    definition: >-
+      A public identifier for an OAuth 2.0 or OIDC client application, issued
+      during client registration with the authorization server.
+
+  - term: Client Secret
+    definition: >-
+      A confidential value known only to the client application and the
+      authorization server, used to authenticate confidential clients at the
+      token endpoint.

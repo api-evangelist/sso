@@ -1,0 +1,96 @@
+extends: spectral:oas
+rules:
+  sso-operation-summaries-title-case:
+    description: All SSO API operation summaries must use Title Case
+    message: "Operation summary '{{value}}' must use Title Case"
+    severity: warn
+    given: "$.paths[*][get,post,put,patch,delete].summary"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^[A-Z][a-zA-Z0-9]*([ ][A-Z][a-zA-Z0-9]*)*$"
+
+  sso-security-scheme-defined:
+    description: SSO APIs must define security schemes
+    message: "SSO API spec must define at least one security scheme in components/securitySchemes"
+    severity: error
+    given: "$.components"
+    then:
+      field: securitySchemes
+      function: truthy
+
+  sso-paths-must-have-summary:
+    description: All SSO API operations must have a summary
+    message: "Operation {{path}} must have a summary"
+    severity: warn
+    given: "$.paths[*][get,post,put,patch,delete]"
+    then:
+      field: summary
+      function: truthy
+
+  sso-paths-kebab-case:
+    description: SSO API paths should use kebab-case
+    message: "Path segment '{{value}}' must use kebab-case"
+    severity: warn
+    given: "$.paths[*]~"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^(/[a-z0-9{][a-z0-9-{}/.]*)*$"
+
+  sso-operations-must-have-operationid:
+    description: All SSO API operations must have an operationId
+    message: "Operation {{path}} is missing an operationId"
+    severity: error
+    given: "$.paths[*][get,post,put,patch,delete]"
+    then:
+      field: operationId
+      function: truthy
+
+  sso-operationid-camel-case:
+    description: SSO API operationIds must use camelCase
+    message: "operationId '{{value}}' must use camelCase"
+    severity: warn
+    given: "$.paths[*][get,post,put,patch,delete].operationId"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^[a-z][a-zA-Z0-9]*$"
+
+  sso-response-200-or-2xx:
+    description: SSO API operations should define at least one 2xx response
+    message: "Operation must define at least one 2xx success response"
+    severity: warn
+    given: "$.paths[*][get,post,put,patch,delete].responses"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+          minProperties: 1
+
+  sso-tags-must-be-defined:
+    description: All tags used in operations must be defined in the global tags list
+    message: "Tag '{{value}}' is used in an operation but not defined globally"
+    severity: warn
+    given: "$.paths[*][get,post,put,patch,delete].tags[*]"
+    then:
+      function: truthy
+
+  sso-info-contact:
+    description: SSO API specs must include contact information
+    message: "SSO API spec must have info.contact defined"
+    severity: warn
+    given: "$.info"
+    then:
+      field: contact
+      function: truthy
+
+  sso-servers-defined:
+    description: SSO API specs must define at least one server
+    message: "SSO API spec must define at least one server entry"
+    severity: error
+    given: "$"
+    then:
+      field: servers
+      function: truthy

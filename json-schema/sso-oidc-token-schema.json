@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/api-evangelist/sso/json-schema/sso-oidc-token-schema.json",
+  "title": "OIDC Token Response",
+  "description": "OpenID Connect token response containing access token, ID token, and optional refresh token",
+  "type": "object",
+  "required": ["access_token", "token_type"],
+  "properties": {
+    "access_token": {
+      "type": "string",
+      "description": "OAuth 2.0 access token for API authorization"
+    },
+    "token_type": {
+      "type": "string",
+      "enum": ["Bearer"],
+      "description": "Token type - always Bearer"
+    },
+    "id_token": {
+      "type": "string",
+      "description": "JWT-encoded ID token containing user identity claims (present when openid scope was requested)"
+    },
+    "refresh_token": {
+      "type": "string",
+      "description": "Refresh token for obtaining new access tokens (present when offline_access scope was granted)"
+    },
+    "expires_in": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of seconds until the access token expires"
+    },
+    "scope": {
+      "type": "string",
+      "description": "Space-separated list of scopes granted"
+    }
+  },
+  "$defs": {
+    "IDTokenClaims": {
+      "title": "ID Token Claims",
+      "description": "Standard claims contained within a decoded OIDC ID token JWT",
+      "type": "object",
+      "required": ["iss", "sub", "aud", "exp", "iat"],
+      "properties": {
+        "iss": {
+          "type": "string",
+          "format": "uri",
+          "description": "Issuer - URL of the OpenID Provider"
+        },
+        "sub": {
+          "type": "string",
+          "description": "Subject - unique identifier for the user at the OpenID Provider"
+        },
+        "aud": {
+          "oneOf": [
+            {"type": "string"},
+            {"type": "array", "items": {"type": "string"}}
+          ],
+          "description": "Audience - client_id(s) this token is intended for"
+        },
+        "exp": {
+          "type": "integer",
+          "description": "Expiration time as Unix timestamp"
+        },
+        "iat": {
+          "type": "integer",
+          "description": "Issued at time as Unix timestamp"
+        },
+        "auth_time": {
+          "type": "integer",
+          "description": "Time of authentication as Unix timestamp"
+        },
+        "nonce": {
+          "type": "string",
+          "description": "Nonce value from the authorization request"
+        },
+        "acr": {
+          "type": "string",
+          "description": "Authentication Context Class Reference"
+        },
+        "amr": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Authentication Methods References"
+        },
+        "azp": {
+          "type": "string",
+          "description": "Authorized Party - client_id of the token recipient"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "User's email address"
+        },
+        "email_verified": {
+          "type": "boolean",
+          "description": "Whether the email has been verified"
+        },
+        "name": {
+          "type": "string",
+          "description": "User's full name"
+        },
+        "given_name": {
+          "type": "string",
+          "description": "User's first name"
+        },
+        "family_name": {
+          "type": "string",
+          "description": "User's last name"
+        },
+        "preferred_username": {
+          "type": "string",
+          "description": "User's preferred username"
+        },
+        "picture": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL of user's profile picture"
+        }
+      }
+    }
+  }
+}

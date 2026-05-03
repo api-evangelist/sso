@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/api-evangelist/sso/json-schema/sso-saml-assertion-schema.json",
+  "title": "SAML Assertion",
+  "description": "JSON representation of a SAML 2.0 Assertion used for SSO authentication",
+  "type": "object",
+  "required": ["issuer", "subject", "conditions"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the assertion"
+    },
+    "version": {
+      "type": "string",
+      "enum": ["2.0"],
+      "description": "SAML version"
+    },
+    "issueInstant": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the assertion was issued"
+    },
+    "issuer": {
+      "type": "string",
+      "description": "Entity ID URI of the identity provider that issued the assertion"
+    },
+    "subject": {
+      "type": "object",
+      "description": "Subject of the assertion - the authenticated user",
+      "required": ["nameId"],
+      "properties": {
+        "nameId": {
+          "type": "string",
+          "description": "Name identifier for the authenticated user"
+        },
+        "nameIdFormat": {
+          "type": "string",
+          "description": "URI indicating the format of the NameID",
+          "examples": [
+            "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+            "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
+            "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
+          ]
+        },
+        "subjectConfirmationMethod": {
+          "type": "string",
+          "description": "Method used to confirm the subject"
+        },
+        "subjectConfirmationData": {
+          "type": "object",
+          "properties": {
+            "notOnOrAfter": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "recipient": {
+              "type": "string",
+              "format": "uri"
+            },
+            "inResponseTo": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "conditions": {
+      "type": "object",
+      "description": "Conditions under which the assertion is valid",
+      "properties": {
+        "notBefore": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Earliest time the assertion is valid"
+        },
+        "notOnOrAfter": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Expiration time of the assertion"
+        },
+        "audienceRestriction": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": "List of audience URIs (SP Entity IDs) for which the assertion is intended"
+        }
+      }
+    },
+    "authnStatement": {
+      "type": "object",
+      "description": "Authentication context and session information",
+      "properties": {
+        "authnInstant": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the authentication event occurred"
+        },
+        "sessionIndex": {
+          "type": "string",
+          "description": "Session index for Single Logout"
+        },
+        "sessionNotOnOrAfter": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the session expires"
+        },
+        "authnContextClassRef": {
+          "type": "string",
+          "description": "Authentication context class reference URI",
+          "examples": [
+            "urn:oasis:names:tc:SAML:2.0:ac:classes:Password",
+            "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport",
+            "urn:oasis:names:tc:SAML:2.0:ac:classes:X509"
+          ]
+        }
+      }
+    },
+    "attributes": {
+      "type": "array",
+      "description": "User attributes included in the assertion",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Attribute name"
+          },
+          "nameFormat": {
+            "type": "string",
+            "description": "Format of the attribute name"
+          },
+          "friendlyName": {
+            "type": "string",
+            "description": "Human-readable name for the attribute"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Attribute values"
+          }
+        }
+      }
+    }
+  }
+}

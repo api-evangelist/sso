@@ -1,0 +1,49 @@
+{
+  "title": "SAML Assertion Structure",
+  "description": "Hierarchical structure of a SAML 2.0 Assertion for Single Sign-On",
+  "type": "object",
+  "properties": {
+    "id": {"type": "string", "description": "Unique assertion identifier"},
+    "version": {"type": "string", "description": "SAML version (2.0)"},
+    "issueInstant": {"type": "string", "description": "Assertion issuance timestamp"},
+    "issuer": {"type": "string", "description": "IdP entity ID"},
+    "subject": {
+      "type": "object",
+      "description": "Authenticated user subject",
+      "properties": {
+        "nameId": {"type": "string"},
+        "nameIdFormat": {"type": "string"},
+        "subjectConfirmation": {"type": "object"}
+      }
+    },
+    "conditions": {
+      "type": "object",
+      "description": "Validity conditions",
+      "properties": {
+        "notBefore": {"type": "string"},
+        "notOnOrAfter": {"type": "string"},
+        "audienceRestriction": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "authnStatement": {
+      "type": "object",
+      "description": "Authentication event details",
+      "properties": {
+        "authnInstant": {"type": "string"},
+        "sessionIndex": {"type": "string"},
+        "authnContextClassRef": {"type": "string"}
+      }
+    },
+    "attributes": {
+      "type": "array",
+      "description": "User attribute statements",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "values": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    }
+  }
+}

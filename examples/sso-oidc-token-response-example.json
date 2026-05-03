@@ -1,0 +1,8 @@
+{
+  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InNpZ25pbmcta2V5LTEifQ.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaXNzIjoiaHR0cHM6Ly9pZHAuZXhhbXBsZS5jb20iLCJhdWQiOiJteS1hcHAiLCJleHAiOjE3NDYyMDAwMDAsImlhdCI6MTc0NjE5NjQwMCwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCJ9.signature",
+  "token_type": "Bearer",
+  "id_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InNpZ25pbmcta2V5LTEifQ.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaXNzIjoiaHR0cHM6Ly9pZHAuZXhhbXBsZS5jb20iLCJhdWQiOiJteS1hcHAiLCJleHAiOjE3NDYyMDAwMDAsImlhdCI6MTc0NjE5NjQwMCwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJKYW5lIERvZSIsImdpdmVuX25hbWUiOiJKYW5lIiwiZmFtaWx5X25hbWUiOiJEb2UifQ.signature",
+  "refresh_token": "1//04refresh_token_example_string",
+  "expires_in": 3600,
+  "scope": "openid profile email"
+}
