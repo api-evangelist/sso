@@ -1,132 +1,179 @@
-naftiko: "1.0.0-alpha1"
-
+naftiko: 1.0.0-alpha2
 info:
-  label: "SSO Identity Federation"
-  description: >-
-    Workflow capability for Single Sign-On identity federation using OpenID
-    Connect (OIDC). Enables applications to integrate SSO authentication flows
-    including authorization code exchange, user profile retrieval, provider
-    discovery, and JWKS key management. Designed for developers and platform
-    engineers implementing federated identity across enterprise applications.
+  label: SSO Identity Federation
+  description: Workflow capability for Single Sign-On identity federation using OpenID Connect (OIDC). Enables applications
+    to integrate SSO authentication flows including authorization code exchange, user profile retrieval, provider discovery,
+    and JWKS key management. Designed for developers and platform engineers implementing federated identity across enterprise
+    applications.
   tags:
-    - SSO
-    - Identity Federation
-    - OIDC
-    - Authentication
-    - OAuth
-    - Security
-  created: "2026-05-02"
-  modified: "2026-05-02"
-
+  - SSO
+  - Identity Federation
+  - OIDC
+  - Authentication
+  - OAuth
+  - Security
+  created: '2026-05-02'
+  modified: '2026-05-06'
 binds:
-  - namespace: env
-    keys:
-      OIDC_CLIENT_ID: OIDC_CLIENT_ID
-      OIDC_CLIENT_SECRET: OIDC_CLIENT_SECRET
-      OIDC_ACCESS_TOKEN: OIDC_ACCESS_TOKEN
-
+- namespace: env
+  keys:
+    OIDC_CLIENT_ID: OIDC_CLIENT_ID
+    OIDC_CLIENT_SECRET: OIDC_CLIENT_SECRET
+    OIDC_ACCESS_TOKEN: OIDC_ACCESS_TOKEN
 capability:
   consumes:
-    - import: oidc-authentication
-      location: ./shared/oidc-authentication.yaml
-
+  - type: http
+    namespace: oidc-authentication
+    baseUri: https://your-idp.example.com
+    description: OpenID Connect authentication and token endpoints
+    resources:
+    - name: token
+      path: /token
+      description: Token endpoint for code exchange and refresh
+      operations:
+      - name: exchange-token
+        method: POST
+        description: Exchange authorization code for access token, ID token, and refresh token
+        body:
+          type: form
+          data:
+            grant_type: '{{tools.grant_type}}'
+            code: '{{tools.code}}'
+            redirect_uri: '{{tools.redirect_uri}}'
+            client_id: '{{OIDC_CLIENT_ID}}'
+            client_secret: '{{OIDC_CLIENT_SECRET}}'
+            code_verifier: '{{tools.code_verifier}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: userinfo
+      path: /userinfo
+      description: UserInfo endpoint for retrieving authenticated user claims
+      operations:
+      - name: get-user-info
+        method: GET
+        description: Get the authenticated user's profile claims
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: jwks
+      path: /jwks
+      description: JWKS endpoint for public key retrieval
+      operations:
+      - name: get-jwks
+        method: GET
+        description: Get JSON Web Key Set for ID token signature verification
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: discovery
+      path: /.well-known/openid-configuration
+      description: OpenID Provider discovery metadata
+      operations:
+      - name: get-oidc-discovery
+        method: GET
+        description: Get OpenID Provider configuration metadata
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
   exposes:
-    - type: rest
-      port: 8080
-      namespace: identity-federation-api
-      description: "Unified REST API for SSO identity federation workflows."
-      resources:
-        - path: /v1/token
-          name: token
-          description: "Token exchange and refresh"
-          operations:
-            - method: POST
-              name: exchange-token
-              description: "Exchange an authorization code or refresh token for access and ID tokens"
-              call: "oidc-authentication.exchange-token"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-
-        - path: /v1/userinfo
-          name: userinfo
-          description: "Authenticated user profile claims"
-          operations:
-            - method: GET
-              name: get-user-info
-              description: "Get the authenticated user's identity claims from the UserInfo endpoint"
-              call: "oidc-authentication.get-user-info"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-
-        - path: /v1/jwks
-          name: jwks
-          description: "JSON Web Key Set for signature verification"
-          operations:
-            - method: GET
-              name: get-jwks
-              description: "Get public keys for verifying ID token signatures"
-              call: "oidc-authentication.get-jwks"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-
-        - path: /v1/discovery
-          name: discovery
-          description: "OpenID Provider configuration discovery"
-          operations:
-            - method: GET
-              name: get-discovery
-              description: "Get OpenID Provider configuration metadata"
-              call: "oidc-authentication.get-oidc-discovery"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-
-    - type: mcp
-      port: 9090
-      namespace: identity-federation-mcp
-      transport: http
-      description: "MCP server for AI-assisted SSO identity federation and token management."
-      tools:
-        - name: exchange-authorization-code
-          description: "Exchange an OIDC/OAuth 2.0 authorization code for access token, ID token, and refresh token"
-          hints:
-            readOnly: false
-            destructive: false
-            idempotent: false
-          call: "oidc-authentication.exchange-token"
-          outputParameters:
-            - type: object
-              mapping: "$."
-
-        - name: get-authenticated-user-profile
-          description: "Retrieve the authenticated user's identity claims (name, email, sub, etc.) from the OIDC UserInfo endpoint"
-          hints:
-            readOnly: true
-            idempotent: true
-          call: "oidc-authentication.get-user-info"
-          outputParameters:
-            - type: object
-              mapping: "$."
-
-        - name: get-provider-signing-keys
-          description: "Retrieve the OpenID Provider's JSON Web Key Set (JWKS) for verifying ID token signatures"
-          hints:
-            readOnly: true
-            idempotent: true
-          call: "oidc-authentication.get-jwks"
-          outputParameters:
-            - type: object
-              mapping: "$."
-
-        - name: discover-oidc-provider-configuration
-          description: "Retrieve OpenID Provider configuration metadata including endpoints, supported features, and algorithms"
-          hints:
-            readOnly: true
-            idempotent: true
-          call: "oidc-authentication.get-oidc-discovery"
-          outputParameters:
-            - type: object
-              mapping: "$."
+  - type: rest
+    port: 8080
+    namespace: identity-federation-api
+    description: Unified REST API for SSO identity federation workflows.
+    resources:
+    - path: /v1/token
+      name: token
+      description: Token exchange and refresh
+      operations:
+      - method: POST
+        name: exchange-token
+        description: Exchange an authorization code or refresh token for access and ID tokens
+        call: oidc-authentication.exchange-token
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/userinfo
+      name: userinfo
+      description: Authenticated user profile claims
+      operations:
+      - method: GET
+        name: get-user-info
+        description: Get the authenticated user's identity claims from the UserInfo endpoint
+        call: oidc-authentication.get-user-info
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/jwks
+      name: jwks
+      description: JSON Web Key Set for signature verification
+      operations:
+      - method: GET
+        name: get-jwks
+        description: Get public keys for verifying ID token signatures
+        call: oidc-authentication.get-jwks
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/discovery
+      name: discovery
+      description: OpenID Provider configuration discovery
+      operations:
+      - method: GET
+        name: get-discovery
+        description: Get OpenID Provider configuration metadata
+        call: oidc-authentication.get-oidc-discovery
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    port: 9090
+    namespace: identity-federation-mcp
+    transport: http
+    description: MCP server for AI-assisted SSO identity federation and token management.
+    tools:
+    - name: exchange-authorization-code
+      description: Exchange an OIDC/OAuth 2.0 authorization code for access token, ID token, and refresh token
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: oidc-authentication.exchange-token
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-authenticated-user-profile
+      description: Retrieve the authenticated user's identity claims (name, email, sub, etc.) from the OIDC UserInfo endpoint
+      hints:
+        readOnly: true
+        idempotent: true
+      call: oidc-authentication.get-user-info
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-provider-signing-keys
+      description: Retrieve the OpenID Provider's JSON Web Key Set (JWKS) for verifying ID token signatures
+      hints:
+        readOnly: true
+        idempotent: true
+      call: oidc-authentication.get-jwks
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: discover-oidc-provider-configuration
+      description: Retrieve OpenID Provider configuration metadata including endpoints, supported features, and algorithms
+      hints:
+        readOnly: true
+        idempotent: true
+      call: oidc-authentication.get-oidc-discovery
+      outputParameters:
+      - type: object
+        mapping: $.
