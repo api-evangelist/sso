@@ -82,7 +82,7 @@ common:
   - url: https://github.com/api-evangelist/sso
     type: GitHubOrg
   - url: json-ld/sso-context.jsonld
-    type: JSON-LD
+    type: JSONLD
   - url: json-schema/sso-saml-assertion-schema.json
     type: JSONSchema
   - url: json-schema/sso-oidc-token-schema.json
