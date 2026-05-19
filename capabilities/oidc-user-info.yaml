@@ -1,0 +1,95 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: OpenID Connect (OIDC) SSO API — User Info
+  description: 'OpenID Connect (OIDC) SSO API — User Info. 2 operations. Lead operation: Get User Info. Self-contained Naftiko
+    capability covering one Sso business surface.'
+  tags:
+  - Sso
+  - User Info
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    SSO_API_KEY: SSO_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: oidc-user-info
+    baseUri: https://your-idp.example.com
+    description: OpenID Connect (OIDC) SSO API — User Info business capability. Self-contained, no shared references.
+    resources:
+    - name: userinfo
+      path: /userinfo
+      operations:
+      - name: getuserinfo
+        method: GET
+        description: Get User Info
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: getuserinfopost
+        method: POST
+        description: Get User Info (POST)
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.SSO_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: oidc-user-info-rest
+    port: 8080
+    description: REST adapter for OpenID Connect (OIDC) SSO API — User Info. One Spectral-compliant resource per consumed
+      operation, prefixed with /v1.
+    resources:
+    - path: /v1/userinfo
+      name: userinfo
+      description: REST surface for userinfo.
+      operations:
+      - method: GET
+        name: getuserinfo
+        description: Get User Info
+        call: oidc-user-info.getuserinfo
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: getuserinfopost
+        description: Get User Info (POST)
+        call: oidc-user-info.getuserinfopost
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: oidc-user-info-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for OpenID Connect (OIDC) SSO API — User Info. One tool per consumed operation, routed inline
+      through this capability's consumes block.
+    tools:
+    - name: get-user-info
+      description: Get User Info
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: oidc-user-info.getuserinfo
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-user-info-post
+      description: Get User Info (POST)
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: false
+      call: oidc-user-info.getuserinfopost
+      outputParameters:
+      - type: object
+        mapping: $.

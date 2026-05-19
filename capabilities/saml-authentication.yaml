@@ -1,0 +1,131 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: SAML 2.0 SSO API — Authentication
+  description: 'SAML 2.0 SSO API — Authentication. 2 operations. Lead operation: Initiate SAML SSO Login. Self-contained Naftiko
+    capability covering one Sso business surface.'
+  tags:
+  - Sso
+  - Authentication
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    SSO_API_KEY: SSO_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: saml-authentication
+    baseUri: https://your-idp.example.com
+    description: SAML 2.0 SSO API — Authentication business capability. Self-contained, no shared references.
+    resources:
+    - name: saml-sso
+      path: /saml/sso
+      operations:
+      - name: initiatesamllogin
+        method: GET
+        description: Initiate SAML SSO Login
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: SAMLRequest
+          in: query
+          type: string
+          description: Base64-encoded and URL-encoded deflated AuthnRequest XML document
+          required: true
+        - name: RelayState
+          in: query
+          type: string
+          description: An opaque value used to maintain state between the request and callback. The SP includes this value
+            and the IdP passes it back unchanged.
+        - name: SigAlg
+          in: query
+          type: string
+          description: The algorithm used to sign the request, required when using HTTP Redirect Binding with signatures.
+        - name: Signature
+          in: query
+          type: string
+          description: Base64-encoded signature of the request, required when using signed HTTP Redirect Binding.
+      - name: receivesamlresponse
+        method: POST
+        description: Receive SAML Assertion Consumer Service
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  exposes:
+  - type: rest
+    namespace: saml-authentication-rest
+    port: 8080
+    description: REST adapter for SAML 2.0 SSO API — Authentication. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/saml/sso
+      name: saml-sso
+      description: REST surface for saml-sso.
+      operations:
+      - method: GET
+        name: initiatesamllogin
+        description: Initiate SAML SSO Login
+        call: saml-authentication.initiatesamllogin
+        with:
+          SAMLRequest: rest.SAMLRequest
+          RelayState: rest.RelayState
+          SigAlg: rest.SigAlg
+          Signature: rest.Signature
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: receivesamlresponse
+        description: Receive SAML Assertion Consumer Service
+        call: saml-authentication.receivesamlresponse
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: saml-authentication-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for SAML 2.0 SSO API — Authentication. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: initiate-saml-sso-login
+      description: Initiate SAML SSO Login
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: saml-authentication.initiatesamllogin
+      with:
+        SAMLRequest: tools.SAMLRequest
+        RelayState: tools.RelayState
+        SigAlg: tools.SigAlg
+        Signature: tools.Signature
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: receive-saml-assertion-consumer-service
+      description: Receive SAML Assertion Consumer Service
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: saml-authentication.receivesamlresponse
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

@@ -1,0 +1,70 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: OpenID Connect (OIDC) SSO API — Keys
+  description: 'OpenID Connect (OIDC) SSO API — Keys. 1 operations. Lead operation: Get JSON Web Key Set. Self-contained Naftiko
+    capability covering one Sso business surface.'
+  tags:
+  - Sso
+  - Keys
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    SSO_API_KEY: SSO_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: oidc-keys
+    baseUri: https://your-idp.example.com
+    description: OpenID Connect (OIDC) SSO API — Keys business capability. Self-contained, no shared references.
+    resources:
+    - name: jwks
+      path: /jwks
+      operations:
+      - name: getjwks
+        method: GET
+        description: Get JSON Web Key Set
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.SSO_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: oidc-keys-rest
+    port: 8080
+    description: REST adapter for OpenID Connect (OIDC) SSO API — Keys. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/jwks
+      name: jwks
+      description: REST surface for jwks.
+      operations:
+      - method: GET
+        name: getjwks
+        description: Get JSON Web Key Set
+        call: oidc-keys.getjwks
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: oidc-keys-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for OpenID Connect (OIDC) SSO API — Keys. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: get-json-web-key-set
+      description: Get JSON Web Key Set
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: oidc-keys.getjwks
+      outputParameters:
+      - type: object
+        mapping: $.

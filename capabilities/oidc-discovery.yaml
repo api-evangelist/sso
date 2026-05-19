@@ -1,0 +1,70 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: OpenID Connect (OIDC) SSO API — Discovery
+  description: 'OpenID Connect (OIDC) SSO API — Discovery. 1 operations. Lead operation: Get OpenID Provider Configuration.
+    Self-contained Naftiko capability covering one Sso business surface.'
+  tags:
+  - Sso
+  - Discovery
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    SSO_API_KEY: SSO_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: oidc-discovery
+    baseUri: https://your-idp.example.com
+    description: OpenID Connect (OIDC) SSO API — Discovery business capability. Self-contained, no shared references.
+    resources:
+    - name: .well-known-openid-configuration
+      path: /.well-known/openid-configuration
+      operations:
+      - name: getoidcdiscovery
+        method: GET
+        description: Get OpenID Provider Configuration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.SSO_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: oidc-discovery-rest
+    port: 8080
+    description: REST adapter for OpenID Connect (OIDC) SSO API — Discovery. One Spectral-compliant resource per consumed
+      operation, prefixed with /v1.
+    resources:
+    - path: /v1/well-known/openid-configuration
+      name: well-known-openid-configuration
+      description: REST surface for .well-known-openid-configuration.
+      operations:
+      - method: GET
+        name: getoidcdiscovery
+        description: Get OpenID Provider Configuration
+        call: oidc-discovery.getoidcdiscovery
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: oidc-discovery-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for OpenID Connect (OIDC) SSO API — Discovery. One tool per consumed operation, routed inline
+      through this capability's consumes block.
+    tools:
+    - name: get-openid-provider-configuration
+      description: Get OpenID Provider Configuration
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: oidc-discovery.getoidcdiscovery
+      outputParameters:
+      - type: object
+        mapping: $.
