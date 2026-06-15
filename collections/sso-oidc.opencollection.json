@@ -1,0 +1,267 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "OpenID Connect (OIDC) SSO API",
+    "version": "1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Authorization",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Initiate OIDC Authorization",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://your-idp.example.com/authorize",
+            "params": [
+              {
+                "name": "response_type",
+                "value": "",
+                "type": "query",
+                "description": "Specifies the authorization flow. Use 'code' for Authorization Code Flow, 'id_token' for Implicit Flow."
+              },
+              {
+                "name": "client_id",
+                "value": "",
+                "type": "query",
+                "description": "The client identifier registered with the OpenID Provider"
+              },
+              {
+                "name": "redirect_uri",
+                "value": "",
+                "type": "query",
+                "description": "URI to redirect to after authentication. Must match a pre-registered redirect URI for the client."
+              },
+              {
+                "name": "scope",
+                "value": "openid profile email",
+                "type": "query",
+                "description": "Space-separated list of scopes. Must include 'openid'. Additional scopes: profile, email, address, phone, offline_access."
+              },
+              {
+                "name": "state",
+                "value": "",
+                "type": "query",
+                "description": "Opaque value used to maintain state between the request and callback. Used to prevent CSRF attacks."
+              },
+              {
+                "name": "nonce",
+                "value": "",
+                "type": "query",
+                "description": "String value used to associate a client session with an ID token and mitigate replay attacks."
+              },
+              {
+                "name": "code_challenge",
+                "value": "",
+                "type": "query",
+                "description": "PKCE code challenge derived from the code_verifier. Required for public clients using PKCE."
+              },
+              {
+                "name": "code_challenge_method",
+                "value": "",
+                "type": "query",
+                "description": "Method used to derive the code_challenge from code_verifier"
+              },
+              {
+                "name": "response_mode",
+                "value": "",
+                "type": "query",
+                "description": "Mechanism used to return authorization response parameters"
+              },
+              {
+                "name": "prompt",
+                "value": "",
+                "type": "query",
+                "description": "Prompts for user interaction during authentication"
+              },
+              {
+                "name": "login_hint",
+                "value": "",
+                "type": "query",
+                "description": "Hint to the authorization server about the login identifier"
+              },
+              {
+                "name": "acr_values",
+                "value": "",
+                "type": "query",
+                "description": "Authentication Context Class Reference values"
+              }
+            ]
+          },
+          "docs": "Initiates an OpenID Connect authorization flow. The client redirects the user to this endpoint with the required parameters. On successful authentication, the OpenID Provider redirects back to the client's redirect_uri with an authorization code (Authorization Code Flow) or tokens (Implicit Flow)."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Token",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Exchange Authorization Code for Tokens",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://your-idp.example.com/token",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "grant_type",
+                  "value": ""
+                },
+                {
+                  "name": "code",
+                  "value": ""
+                },
+                {
+                  "name": "redirect_uri",
+                  "value": ""
+                },
+                {
+                  "name": "client_id",
+                  "value": ""
+                },
+                {
+                  "name": "client_secret",
+                  "value": ""
+                },
+                {
+                  "name": "code_verifier",
+                  "value": ""
+                },
+                {
+                  "name": "refresh_token",
+                  "value": ""
+                },
+                {
+                  "name": "scope",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Exchanges an authorization code for an access token, ID token, and optionally a refresh token. Also used to refresh expired access tokens using a refresh token. Supports client_secret_basic and client_secret_post authentication methods."
+        },
+        {
+          "info": {
+            "name": "Revoke Token",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://your-idp.example.com/revoke",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "token",
+                  "value": ""
+                },
+                {
+                  "name": "token_type_hint",
+                  "value": ""
+                },
+                {
+                  "name": "client_id",
+                  "value": ""
+                },
+                {
+                  "name": "client_secret",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Revokes an access token or refresh token. The token is immediately invalidated and can no longer be used for API access or token refresh."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "User Info",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get User Info",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://your-idp.example.com/userinfo",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns claims about the authenticated user. The access token is passed as a Bearer token in the Authorization header. The claims returned depend on the scopes granted during authorization."
+        },
+        {
+          "info": {
+            "name": "Get User Info (POST)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://your-idp.example.com/userinfo",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns claims about the authenticated user via POST request. The access token is passed as a Bearer token in the Authorization header."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Discovery",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get OpenID Provider Configuration",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://your-idp.example.com/.well-known/openid-configuration"
+          },
+          "docs": "Returns the OpenID Provider's configuration metadata as defined in RFC 8414 (OAuth 2.0 Authorization Server Metadata) and the OIDC Discovery specification. Clients use this endpoint to discover all required endpoints, supported features, and public keys."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Keys",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get JSON Web Key Set",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://your-idp.example.com/jwks"
+          },
+          "docs": "Returns the JSON Web Key Set (JWKS) containing the public keys used by the OpenID Provider to sign ID tokens and other JWTs. Clients use these keys to verify the signature of ID tokens received from the token endpoint."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
