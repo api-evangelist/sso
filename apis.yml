@@ -67,6 +67,10 @@ apis:
       - url: openapi/sso-oidc-openapi.yml
         type: OpenAPI
 common:
+  - type: DomainSecurity
+    url: security/sso-domain-security.yml
+  - type: Authentication
+    url: authentication/sso-authentication.yml
   - url: https://www.oasis-open.org/standards#samlv2.0
     type: Specification
   - url: https://openid.net/connect/
@@ -85,3 +89,5 @@ common:
     type: Vocabulary
   - url: rules/sso-rules.yml
     type: SpectralRules
+  - url: https://www.oasis-open.org/feed/
+    type: Blog
