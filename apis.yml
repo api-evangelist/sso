@@ -67,6 +67,8 @@ apis:
       - url: openapi/sso-oidc-openapi.yml
         type: OpenAPI
 common:
+  - type: AgenticAccess
+    url: agentic-access/sso-agentic-access.yml
   - type: DomainSecurity
     url: security/sso-domain-security.yml
   - type: Authentication
