@@ -1,0 +1,160 @@
+openapi: 3.1.0
+info:
+  title: OpenID Connect (OIDC) SSO Authentication User Info API
+  description: The OpenID Connect (OIDC) API is a lightweight identity layer built on top of OAuth 2.0 that enables applications to verify user identity and obtain basic profile information. OIDC defines standard endpoints including the Authorization Endpoint, Token Endpoint, UserInfo Endpoint, and JWKS URI. It supports Authorization Code Flow, Implicit Flow, Hybrid Flow, and PKCE extensions for public clients. OIDC is widely implemented by identity providers including Okta, Microsoft Entra ID, Google, Auth0, and Keycloak.
+  version: '1.0'
+  contact:
+    name: OpenID Foundation
+    url: https://openid.net/connect/
+  termsOfService: https://openid.net/connect/
+servers:
+- url: https://your-idp.example.com
+  description: OpenID Provider (OP) Server
+tags:
+- name: User Info
+  description: UserInfo endpoint for retrieving authenticated user profile claims.
+paths:
+  /userinfo:
+    get:
+      operationId: getUserInfo
+      summary: Get User Info
+      description: Returns claims about the authenticated user. The access token is passed as a Bearer token in the Authorization header. The claims returned depend on the scopes granted during authorization.
+      tags:
+      - User Info
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: User profile claims
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfoResponse'
+        '401':
+          description: Invalid or expired access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      operationId: getUserInfoPost
+      summary: Get User Info (POST)
+      description: Returns claims about the authenticated user via POST request. The access token is passed as a Bearer token in the Authorization header.
+      tags:
+      - User Info
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: User profile claims
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfoResponse'
+        '401':
+          description: Invalid or expired access token
+components:
+  schemas:
+    UserInfoResponse:
+      type: object
+      properties:
+        sub:
+          type: string
+          description: Subject identifier - unique identifier for the user at the OP
+        name:
+          type: string
+          description: User's full name
+        given_name:
+          type: string
+          description: User's given (first) name
+        family_name:
+          type: string
+          description: User's family (last) name
+        middle_name:
+          type: string
+          description: User's middle name
+        nickname:
+          type: string
+          description: User's casual name
+        preferred_username:
+          type: string
+          description: Shorthand name for the user (username, handle)
+        profile:
+          type: string
+          format: uri
+          description: URL of the user's profile page
+        picture:
+          type: string
+          format: uri
+          description: URL of the user's profile picture
+        website:
+          type: string
+          format: uri
+          description: URL of the user's website
+        email:
+          type: string
+          format: email
+          description: User's email address
+        email_verified:
+          type: boolean
+          description: Whether the email has been verified
+        gender:
+          type: string
+          description: User's gender
+        birthdate:
+          type: string
+          description: User's birthdate in ISO 8601 format
+        zoneinfo:
+          type: string
+          description: User's time zone identifier
+        locale:
+          type: string
+          description: User's locale (BCP47 language tag)
+        phone_number:
+          type: string
+          description: User's phone number in E.164 format
+        phone_number_verified:
+          type: boolean
+          description: Whether the phone number has been verified
+        address:
+          type: object
+          description: User's address
+          properties:
+            formatted:
+              type: string
+            street_address:
+              type: string
+            locality:
+              type: string
+            region:
+              type: string
+            postal_code:
+              type: string
+            country:
+              type: string
+        updated_at:
+          type: integer
+          description: Unix timestamp of last profile update
+    ErrorResponse:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: Error code as defined in RFC 6749 (e.g., invalid_request, invalid_client, invalid_grant, unauthorized_client, unsupported_grant_type, invalid_scope)
+        error_description:
+          type: string
+          description: Human-readable error description
+        error_uri:
+          type: string
+          format: uri
+          description: URI of a web page with more information about the error
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth 2.0 Bearer access token in Authorization header
+externalDocs:
+  description: OpenID Connect Specification
+  url: https://openid.net/connect/

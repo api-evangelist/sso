@@ -1,0 +1,110 @@
+openapi: 3.1.0
+info:
+  title: OpenID Connect (OIDC) SSO Authentication API
+  description: The OpenID Connect (OIDC) API is a lightweight identity layer built on top of OAuth 2.0 that enables applications to verify user identity and obtain basic profile information. OIDC defines standard endpoints including the Authorization Endpoint, Token Endpoint, UserInfo Endpoint, and JWKS URI. It supports Authorization Code Flow, Implicit Flow, Hybrid Flow, and PKCE extensions for public clients. OIDC is widely implemented by identity providers including Okta, Microsoft Entra ID, Google, Auth0, and Keycloak.
+  version: '1.0'
+  contact:
+    name: OpenID Foundation
+    url: https://openid.net/connect/
+  termsOfService: https://openid.net/connect/
+servers:
+- url: https://your-idp.example.com
+  description: OpenID Provider (OP) Server
+tags:
+- name: Authentication
+  description: SAML 2.0 authentication request and response endpoints for initiating and completing SSO login flows.
+paths:
+  /saml/sso:
+    get:
+      operationId: initiateSAMLLogin
+      summary: Initiate SAML SSO Login
+      description: Initiates a SAML 2.0 Single Sign-On login flow via HTTP Redirect Binding. The identity provider receives a SAMLRequest parameter containing a base64-encoded and deflated AuthnRequest XML document. On successful authentication, the IdP redirects back to the SP's Assertion Consumer Service (ACS) URL with a SAMLResponse.
+      tags:
+      - Authentication
+      parameters:
+      - name: SAMLRequest
+        in: query
+        required: true
+        schema:
+          type: string
+        description: Base64-encoded and URL-encoded deflated AuthnRequest XML document
+      - name: RelayState
+        in: query
+        schema:
+          type: string
+        description: An opaque value used to maintain state between the request and callback. The SP includes this value and the IdP passes it back unchanged.
+      - name: SigAlg
+        in: query
+        schema:
+          type: string
+        description: The algorithm used to sign the request, required when using HTTP Redirect Binding with signatures.
+        example: http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
+      - name: Signature
+        in: query
+        schema:
+          type: string
+        description: Base64-encoded signature of the request, required when using signed HTTP Redirect Binding.
+      responses:
+        '302':
+          description: Redirect to service provider ACS with SAMLResponse
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+              description: Redirect URL containing SAMLResponse and RelayState parameters
+        '400':
+          description: Invalid SAMLRequest or missing required parameters
+          content:
+            text/html:
+              schema:
+                type: string
+    post:
+      operationId: receiveSAMLResponse
+      summary: Receive SAML Assertion Consumer Service
+      description: Assertion Consumer Service (ACS) endpoint for receiving SAML 2.0 responses from the identity provider via HTTP POST Binding. The SP receives a base64-encoded SAMLResponse containing a signed SAML assertion, validates the signature and assertion, and establishes a session for the authenticated user.
+      tags:
+      - Authentication
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+              - SAMLResponse
+              properties:
+                SAMLResponse:
+                  type: string
+                  description: Base64-encoded SAML Response XML document containing the authentication assertion signed by the IdP.
+                RelayState:
+                  type: string
+                  description: Opaque value originally sent in the AuthnRequest and returned unchanged by the IdP.
+      responses:
+        '302':
+          description: Successful authentication - redirect to target resource
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+              description: Redirect URL to the originally requested resource
+            Set-Cookie:
+              schema:
+                type: string
+              description: Session cookie for the authenticated user
+        '401':
+          description: Authentication failed - invalid or expired assertion
+          content:
+            text/html:
+              schema:
+                type: string
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth 2.0 Bearer access token in Authorization header
+externalDocs:
+  description: OpenID Connect Specification
+  url: https://openid.net/connect/

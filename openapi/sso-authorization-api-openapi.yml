@@ -1,0 +1,151 @@
+openapi: 3.1.0
+info:
+  title: OpenID Connect (OIDC) SSO Authentication Authorization API
+  description: The OpenID Connect (OIDC) API is a lightweight identity layer built on top of OAuth 2.0 that enables applications to verify user identity and obtain basic profile information. OIDC defines standard endpoints including the Authorization Endpoint, Token Endpoint, UserInfo Endpoint, and JWKS URI. It supports Authorization Code Flow, Implicit Flow, Hybrid Flow, and PKCE extensions for public clients. OIDC is widely implemented by identity providers including Okta, Microsoft Entra ID, Google, Auth0, and Keycloak.
+  version: '1.0'
+  contact:
+    name: OpenID Foundation
+    url: https://openid.net/connect/
+  termsOfService: https://openid.net/connect/
+servers:
+- url: https://your-idp.example.com
+  description: OpenID Provider (OP) Server
+tags:
+- name: Authorization
+  description: OIDC authorization endpoints for initiating authentication flows and exchanging authorization codes for tokens.
+paths:
+  /authorize:
+    get:
+      operationId: initiateOIDCAuthorization
+      summary: Initiate OIDC Authorization
+      description: Initiates an OpenID Connect authorization flow. The client redirects the user to this endpoint with the required parameters. On successful authentication, the OpenID Provider redirects back to the client's redirect_uri with an authorization code (Authorization Code Flow) or tokens (Implicit Flow).
+      tags:
+      - Authorization
+      parameters:
+      - name: response_type
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - code
+          - token
+          - id_token
+          - code token
+          - code id_token
+          - token id_token
+          - code token id_token
+        description: Specifies the authorization flow. Use 'code' for Authorization Code Flow, 'id_token' for Implicit Flow.
+      - name: client_id
+        in: query
+        required: true
+        schema:
+          type: string
+        description: The client identifier registered with the OpenID Provider
+      - name: redirect_uri
+        in: query
+        required: true
+        schema:
+          type: string
+          format: uri
+        description: URI to redirect to after authentication. Must match a pre-registered redirect URI for the client.
+      - name: scope
+        in: query
+        required: true
+        schema:
+          type: string
+        description: 'Space-separated list of scopes. Must include ''openid''. Additional scopes: profile, email, address, phone, offline_access.'
+        example: openid profile email
+      - name: state
+        in: query
+        required: true
+        schema:
+          type: string
+        description: Opaque value used to maintain state between the request and callback. Used to prevent CSRF attacks.
+      - name: nonce
+        in: query
+        schema:
+          type: string
+        description: String value used to associate a client session with an ID token and mitigate replay attacks.
+      - name: code_challenge
+        in: query
+        schema:
+          type: string
+        description: PKCE code challenge derived from the code_verifier. Required for public clients using PKCE.
+      - name: code_challenge_method
+        in: query
+        schema:
+          type: string
+          enum:
+          - S256
+          - plain
+        description: Method used to derive the code_challenge from code_verifier
+      - name: response_mode
+        in: query
+        schema:
+          type: string
+          enum:
+          - query
+          - fragment
+          - form_post
+        description: Mechanism used to return authorization response parameters
+      - name: prompt
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - login
+          - consent
+          - select_account
+        description: Prompts for user interaction during authentication
+      - name: login_hint
+        in: query
+        schema:
+          type: string
+        description: Hint to the authorization server about the login identifier
+      - name: acr_values
+        in: query
+        schema:
+          type: string
+        description: Authentication Context Class Reference values
+      responses:
+        '302':
+          description: Redirect to redirect_uri with authorization code or tokens
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+              description: Redirect URL with code and state parameters (Authorization Code Flow) or tokens in fragment (Implicit Flow)
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: Error code as defined in RFC 6749 (e.g., invalid_request, invalid_client, invalid_grant, unauthorized_client, unsupported_grant_type, invalid_scope)
+        error_description:
+          type: string
+          description: Human-readable error description
+        error_uri:
+          type: string
+          format: uri
+          description: URI of a web page with more information about the error
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth 2.0 Bearer access token in Authorization header
+externalDocs:
+  description: OpenID Connect Specification
+  url: https://openid.net/connect/

@@ -1,0 +1,86 @@
+openapi: 3.1.0
+info:
+  title: OpenID Connect (OIDC) SSO Authentication Keys API
+  description: The OpenID Connect (OIDC) API is a lightweight identity layer built on top of OAuth 2.0 that enables applications to verify user identity and obtain basic profile information. OIDC defines standard endpoints including the Authorization Endpoint, Token Endpoint, UserInfo Endpoint, and JWKS URI. It supports Authorization Code Flow, Implicit Flow, Hybrid Flow, and PKCE extensions for public clients. OIDC is widely implemented by identity providers including Okta, Microsoft Entra ID, Google, Auth0, and Keycloak.
+  version: '1.0'
+  contact:
+    name: OpenID Foundation
+    url: https://openid.net/connect/
+  termsOfService: https://openid.net/connect/
+servers:
+- url: https://your-idp.example.com
+  description: OpenID Provider (OP) Server
+tags:
+- name: Keys
+  description: JSON Web Key Set (JWKS) endpoint for retrieving public keys used to verify ID token signatures.
+paths:
+  /jwks:
+    get:
+      operationId: getJWKS
+      summary: Get JSON Web Key Set
+      description: Returns the JSON Web Key Set (JWKS) containing the public keys used by the OpenID Provider to sign ID tokens and other JWTs. Clients use these keys to verify the signature of ID tokens received from the token endpoint.
+      tags:
+      - Keys
+      responses:
+        '200':
+          description: JSON Web Key Set
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWKSResponse'
+components:
+  schemas:
+    JWKSResponse:
+      type: object
+      required:
+      - keys
+      properties:
+        keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/JWK'
+    JWK:
+      type: object
+      description: JSON Web Key for verifying token signatures
+      required:
+      - kty
+      properties:
+        kty:
+          type: string
+          description: Key type (RSA, EC, oct)
+          example: RSA
+        use:
+          type: string
+          enum:
+          - sig
+          - enc
+          description: Intended use of the key
+        kid:
+          type: string
+          description: Key identifier
+        alg:
+          type: string
+          description: Algorithm intended for use with this key
+          example: RS256
+        n:
+          type: string
+          description: RSA modulus (base64url-encoded)
+        e:
+          type: string
+          description: RSA public exponent (base64url-encoded)
+        x5c:
+          type: array
+          items:
+            type: string
+          description: X.509 certificate chain
+        x5t:
+          type: string
+          description: X.509 certificate SHA-1 thumbprint
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth 2.0 Bearer access token in Authorization header
+externalDocs:
+  description: OpenID Connect Specification
+  url: https://openid.net/connect/

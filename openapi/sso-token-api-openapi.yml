@@ -1,0 +1,167 @@
+openapi: 3.1.0
+info:
+  title: OpenID Connect (OIDC) SSO Authentication Token API
+  description: The OpenID Connect (OIDC) API is a lightweight identity layer built on top of OAuth 2.0 that enables applications to verify user identity and obtain basic profile information. OIDC defines standard endpoints including the Authorization Endpoint, Token Endpoint, UserInfo Endpoint, and JWKS URI. It supports Authorization Code Flow, Implicit Flow, Hybrid Flow, and PKCE extensions for public clients. OIDC is widely implemented by identity providers including Okta, Microsoft Entra ID, Google, Auth0, and Keycloak.
+  version: '1.0'
+  contact:
+    name: OpenID Foundation
+    url: https://openid.net/connect/
+  termsOfService: https://openid.net/connect/
+servers:
+- url: https://your-idp.example.com
+  description: OpenID Provider (OP) Server
+tags:
+- name: Token
+  description: Token endpoint operations for exchanging authorization codes and refresh tokens for access tokens and ID tokens.
+paths:
+  /token:
+    post:
+      operationId: exchangeToken
+      summary: Exchange Authorization Code for Tokens
+      description: Exchanges an authorization code for an access token, ID token, and optionally a refresh token. Also used to refresh expired access tokens using a refresh token. Supports client_secret_basic and client_secret_post authentication methods.
+      tags:
+      - Token
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+              - grant_type
+              properties:
+                grant_type:
+                  type: string
+                  enum:
+                  - authorization_code
+                  - refresh_token
+                  - client_credentials
+                  description: The grant type for the token request
+                code:
+                  type: string
+                  description: Authorization code received from the authorization endpoint. Required for authorization_code grant.
+                redirect_uri:
+                  type: string
+                  format: uri
+                  description: Must match the redirect_uri used in the authorization request. Required for authorization_code grant.
+                client_id:
+                  type: string
+                  description: Client identifier. Required for client_secret_post authentication.
+                client_secret:
+                  type: string
+                  description: Client secret. Required for client_secret_post authentication.
+                code_verifier:
+                  type: string
+                  description: PKCE code verifier. Required when code_challenge was used in the authorization request.
+                refresh_token:
+                  type: string
+                  description: Refresh token for obtaining new access tokens. Required for refresh_token grant.
+                scope:
+                  type: string
+                  description: Optional scope for refresh_token grant. Must be a subset of originally granted scopes.
+      responses:
+        '200':
+          description: Token response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Invalid token request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Client authentication failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /revoke:
+    post:
+      operationId: revokeToken
+      summary: Revoke Token
+      description: Revokes an access token or refresh token. The token is immediately invalidated and can no longer be used for API access or token refresh.
+      tags:
+      - Token
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+              - token
+              properties:
+                token:
+                  type: string
+                  description: The access token or refresh token to revoke
+                token_type_hint:
+                  type: string
+                  enum:
+                  - access_token
+                  - refresh_token
+                  description: Optional hint about the token type being revoked
+                client_id:
+                  type: string
+                  description: Client identifier
+                client_secret:
+                  type: string
+                  description: Client secret
+      responses:
+        '200':
+          description: Token successfully revoked (or was already invalid)
+        '400':
+          description: Invalid revocation request
+components:
+  schemas:
+    TokenResponse:
+      type: object
+      required:
+      - access_token
+      - token_type
+      properties:
+        access_token:
+          type: string
+          description: OAuth 2.0 access token for API access
+        token_type:
+          type: string
+          enum:
+          - Bearer
+          description: Token type (always Bearer)
+        id_token:
+          type: string
+          description: JWT-encoded ID token containing authenticated user claims. Present for requests that included 'openid' scope.
+        refresh_token:
+          type: string
+          description: Refresh token for obtaining new access tokens without re- authentication. Present when offline_access scope was granted.
+        expires_in:
+          type: integer
+          description: Number of seconds until the access token expires
+        scope:
+          type: string
+          description: Space-separated list of scopes granted by the authorization server
+    ErrorResponse:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          description: Error code as defined in RFC 6749 (e.g., invalid_request, invalid_client, invalid_grant, unauthorized_client, unsupported_grant_type, invalid_scope)
+        error_description:
+          type: string
+          description: Human-readable error description
+        error_uri:
+          type: string
+          format: uri
+          description: URI of a web page with more information about the error
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth 2.0 Bearer access token in Authorization header
+externalDocs:
+  description: OpenID Connect Specification
+  url: https://openid.net/connect/

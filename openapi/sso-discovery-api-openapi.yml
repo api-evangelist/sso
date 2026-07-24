@@ -1,0 +1,119 @@
+openapi: 3.1.0
+info:
+  title: OpenID Connect (OIDC) SSO Authentication Discovery API
+  description: The OpenID Connect (OIDC) API is a lightweight identity layer built on top of OAuth 2.0 that enables applications to verify user identity and obtain basic profile information. OIDC defines standard endpoints including the Authorization Endpoint, Token Endpoint, UserInfo Endpoint, and JWKS URI. It supports Authorization Code Flow, Implicit Flow, Hybrid Flow, and PKCE extensions for public clients. OIDC is widely implemented by identity providers including Okta, Microsoft Entra ID, Google, Auth0, and Keycloak.
+  version: '1.0'
+  contact:
+    name: OpenID Foundation
+    url: https://openid.net/connect/
+  termsOfService: https://openid.net/connect/
+servers:
+- url: https://your-idp.example.com
+  description: OpenID Provider (OP) Server
+tags:
+- name: Discovery
+  description: OpenID Provider Discovery endpoint for retrieving provider configuration metadata.
+paths:
+  /.well-known/openid-configuration:
+    get:
+      operationId: getOIDCDiscovery
+      summary: Get OpenID Provider Configuration
+      description: Returns the OpenID Provider's configuration metadata as defined in RFC 8414 (OAuth 2.0 Authorization Server Metadata) and the OIDC Discovery specification. Clients use this endpoint to discover all required endpoints, supported features, and public keys.
+      tags:
+      - Discovery
+      responses:
+        '200':
+          description: OpenID Provider configuration metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OIDCConfiguration'
+components:
+  schemas:
+    OIDCConfiguration:
+      type: object
+      required:
+      - issuer
+      - authorization_endpoint
+      - token_endpoint
+      - jwks_uri
+      - response_types_supported
+      - subject_types_supported
+      - id_token_signing_alg_values_supported
+      properties:
+        issuer:
+          type: string
+          format: uri
+          description: URL of the OpenID Provider's issuer identifier
+        authorization_endpoint:
+          type: string
+          format: uri
+          description: URL of the authorization endpoint
+        token_endpoint:
+          type: string
+          format: uri
+          description: URL of the token endpoint
+        userinfo_endpoint:
+          type: string
+          format: uri
+          description: URL of the UserInfo endpoint
+        jwks_uri:
+          type: string
+          format: uri
+          description: URL of the JWKS endpoint
+        registration_endpoint:
+          type: string
+          format: uri
+          description: URL of the dynamic client registration endpoint
+        scopes_supported:
+          type: array
+          items:
+            type: string
+          description: Supported OAuth 2.0 scopes
+        response_types_supported:
+          type: array
+          items:
+            type: string
+          description: Supported OAuth 2.0 response types
+        grant_types_supported:
+          type: array
+          items:
+            type: string
+          description: Supported OAuth 2.0 grant types
+        subject_types_supported:
+          type: array
+          items:
+            type: string
+          description: Supported subject identifier types (public, pairwise)
+        id_token_signing_alg_values_supported:
+          type: array
+          items:
+            type: string
+          description: Supported JWS signing algorithms for ID tokens
+        token_endpoint_auth_methods_supported:
+          type: array
+          items:
+            type: string
+          description: Supported client authentication methods
+        claims_supported:
+          type: array
+          items:
+            type: string
+          description: Supported claims in ID tokens and UserInfo responses
+        code_challenge_methods_supported:
+          type: array
+          items:
+            type: string
+          description: Supported PKCE code challenge methods
+        revocation_endpoint:
+          type: string
+          format: uri
+          description: URL of the token revocation endpoint
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth 2.0 Bearer access token in Authorization header
+externalDocs:
+  description: OpenID Connect Specification
+  url: https://openid.net/connect/

@@ -1,0 +1,72 @@
+openapi: 3.1.0
+info:
+  title: OpenID Connect (OIDC) SSO Authentication Logout API
+  description: The OpenID Connect (OIDC) API is a lightweight identity layer built on top of OAuth 2.0 that enables applications to verify user identity and obtain basic profile information. OIDC defines standard endpoints including the Authorization Endpoint, Token Endpoint, UserInfo Endpoint, and JWKS URI. It supports Authorization Code Flow, Implicit Flow, Hybrid Flow, and PKCE extensions for public clients. OIDC is widely implemented by identity providers including Okta, Microsoft Entra ID, Google, Auth0, and Keycloak.
+  version: '1.0'
+  contact:
+    name: OpenID Foundation
+    url: https://openid.net/connect/
+  termsOfService: https://openid.net/connect/
+servers:
+- url: https://your-idp.example.com
+  description: OpenID Provider (OP) Server
+tags:
+- name: Logout
+  description: SAML 2.0 Single Logout (SLO) endpoints for terminating SSO sessions across all service providers.
+paths:
+  /saml/logout:
+    get:
+      operationId: initiateSAMLLogout
+      summary: Initiate SAML Single Logout
+      description: Initiates a SAML 2.0 Single Logout (SLO) flow via HTTP Redirect Binding. Sends a LogoutRequest to the identity provider to terminate the SSO session. The IdP propagates the logout to all other service providers in the SSO session.
+      tags:
+      - Logout
+      parameters:
+      - name: SAMLRequest
+        in: query
+        schema:
+          type: string
+        description: Base64-encoded deflated LogoutRequest XML
+      - name: SAMLResponse
+        in: query
+        schema:
+          type: string
+        description: Base64-encoded deflated LogoutResponse XML from IdP
+      - name: RelayState
+        in: query
+        schema:
+          type: string
+        description: Opaque state value
+      - name: SigAlg
+        in: query
+        schema:
+          type: string
+        description: Signature algorithm URI
+      - name: Signature
+        in: query
+        schema:
+          type: string
+        description: Base64-encoded request signature
+      responses:
+        '302':
+          description: Redirect after logout processing
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+            Set-Cookie:
+              schema:
+                type: string
+              description: Session cookie deletion
+        '400':
+          description: Invalid logout request
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth 2.0 Bearer access token in Authorization header
+externalDocs:
+  description: OpenID Connect Specification
+  url: https://openid.net/connect/
