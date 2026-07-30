@@ -1,3 +1,17 @@
+accessModel:
+  pricing: freemium
+  onboarding: self-serve
+  trial: false
+  try_now: true
+  public: false
+  label: Freemium · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/sso.png
 name: SSO
 description: >-
   Single Sign-On (SSO) is an authentication technology that allows users to log in once and gain access to multiple
@@ -19,53 +33,159 @@ tags:
 created: '2025-01-01'
 modified: '2026-05-19'
 apis:
-  - aid: sso:saml-authentication
-    name: SAML SSO Authentication API
-    tags:
-      - Authentication
-      - Federation
-      - Identity
-      - SAML
-      - Single Sign-On
-      - SSO
-    baseURL: https://your-idp.example.com
-    humanURL: https://www.oasis-open.org/standards#samlv2.0
-    description: >-
-      The SAML 2.0 Single Sign-On API enables service providers and identity providers to exchange authentication
-      assertions via XML-signed messages. It supports HTTP Redirect Binding and HTTP POST Binding for AuthnRequest and
-      Response flows, Assertion Consumer Service (ACS) endpoints, Single Logout (SLO), and IdP metadata retrieval as
-      defined by the OASIS SAML 2.0 specification.
-    properties:
-      - url: https://www.oasis-open.org/standards#samlv2.0
-        type: Documentation
-      - url: https://wiki.oasis-open.org/security/FrontPage
-        type: Documentation
-      - url: openapi/sso-saml-openapi.yml
-        type: OpenAPI
-  - aid: sso:oidc-authentication
-    name: OpenID Connect (OIDC) Authentication API
-    tags:
-      - Authentication
-      - Identity
-      - JWT
-      - OAuth
-      - OIDC
-      - Single Sign-On
-      - SSO
-    baseURL: https://your-idp.example.com
-    humanURL: https://openid.net/connect/
-    description: >-
-      The OpenID Connect (OIDC) API is a lightweight identity layer built on top of OAuth 2.0. It enables applications
-      to verify user identity through the Authorization Code Flow, Implicit Flow, and Hybrid Flow. Key endpoints include
-      the Authorization Endpoint, Token Endpoint, UserInfo Endpoint, and JWKS URI for token signature verification. OIDC
-      is supported by all major identity providers.
-    properties:
-      - url: https://openid.net/connect/
-        type: Documentation
-      - url: https://openid.net/developers/specs/
-        type: Specification
-      - url: openapi/sso-oidc-openapi.yml
-        type: OpenAPI
+- aid: sso:sso-authentication-api
+  name: SSO Authentication API
+  description: >-
+    SAML 2.0 authentication request and response endpoints for initiating and completing SSO login flows.
+  humanURL: https://www.oasis-open.org/standards#samlv2.0
+  baseURL: https://your-idp.example.com
+  tags:
+  - Authentication
+  properties:
+  - type: OpenAPI
+    url: openapi/sso-authentication-api-openapi.yml
+  - type: Documentation
+    url: https://www.oasis-open.org/standards#samlv2.0
+  - type: Documentation
+    url: https://wiki.oasis-open.org/security/FrontPage
+  - type: Documentation
+    url: https://openid.net/connect/
+  - type: Specification
+    url: https://openid.net/developers/specs/
+- aid: sso:sso-authorization-api
+  name: SSO Authorization API
+  description: >-
+    OIDC authorization endpoints for initiating authentication flows and exchanging authorization codes
+    for tokens.
+  humanURL: https://www.oasis-open.org/standards#samlv2.0
+  baseURL: https://your-idp.example.com
+  tags:
+  - Authorization
+  properties:
+  - type: OpenAPI
+    url: openapi/sso-authorization-api-openapi.yml
+  - type: Documentation
+    url: https://www.oasis-open.org/standards#samlv2.0
+  - type: Documentation
+    url: https://wiki.oasis-open.org/security/FrontPage
+  - type: Documentation
+    url: https://openid.net/connect/
+  - type: Specification
+    url: https://openid.net/developers/specs/
+- aid: sso:sso-discovery-api
+  name: SSO Discovery API
+  description: OpenID Provider Discovery endpoint for retrieving provider configuration metadata.
+  humanURL: https://www.oasis-open.org/standards#samlv2.0
+  baseURL: https://your-idp.example.com
+  tags:
+  - Discovery
+  properties:
+  - type: OpenAPI
+    url: openapi/sso-discovery-api-openapi.yml
+  - type: Documentation
+    url: https://www.oasis-open.org/standards#samlv2.0
+  - type: Documentation
+    url: https://wiki.oasis-open.org/security/FrontPage
+  - type: Documentation
+    url: https://openid.net/connect/
+  - type: Specification
+    url: https://openid.net/developers/specs/
+- aid: sso:sso-keys-api
+  name: SSO Keys API
+  description: >-
+    JSON Web Key Set (JWKS) endpoint for retrieving public keys used to verify ID token signatures.
+  humanURL: https://www.oasis-open.org/standards#samlv2.0
+  baseURL: https://your-idp.example.com
+  tags:
+  - Keys
+  properties:
+  - type: OpenAPI
+    url: openapi/sso-keys-api-openapi.yml
+  - type: Documentation
+    url: https://www.oasis-open.org/standards#samlv2.0
+  - type: Documentation
+    url: https://wiki.oasis-open.org/security/FrontPage
+  - type: Documentation
+    url: https://openid.net/connect/
+  - type: Specification
+    url: https://openid.net/developers/specs/
+- aid: sso:sso-logout-api
+  name: SSO Logout API
+  description: >-
+    SAML 2.0 Single Logout (SLO) endpoints for terminating SSO sessions across all service providers.
+  humanURL: https://www.oasis-open.org/standards#samlv2.0
+  baseURL: https://your-idp.example.com
+  tags:
+  - Logout
+  properties:
+  - type: OpenAPI
+    url: openapi/sso-logout-api-openapi.yml
+  - type: Documentation
+    url: https://www.oasis-open.org/standards#samlv2.0
+  - type: Documentation
+    url: https://wiki.oasis-open.org/security/FrontPage
+  - type: Documentation
+    url: https://openid.net/connect/
+  - type: Specification
+    url: https://openid.net/developers/specs/
+- aid: sso:sso-metadata-api
+  name: SSO Metadata API
+  description: >-
+    SAML 2.0 metadata endpoints for exchanging federation configuration between identity providers and
+    service providers.
+  humanURL: https://www.oasis-open.org/standards#samlv2.0
+  baseURL: https://your-idp.example.com
+  tags:
+  - Metadata
+  properties:
+  - type: OpenAPI
+    url: openapi/sso-metadata-api-openapi.yml
+  - type: Documentation
+    url: https://www.oasis-open.org/standards#samlv2.0
+  - type: Documentation
+    url: https://wiki.oasis-open.org/security/FrontPage
+  - type: Documentation
+    url: https://openid.net/connect/
+  - type: Specification
+    url: https://openid.net/developers/specs/
+- aid: sso:sso-token-api
+  name: SSO Token API
+  description: >-
+    Token endpoint operations for exchanging authorization codes and refresh tokens for access tokens
+    and ID tokens.
+  humanURL: https://www.oasis-open.org/standards#samlv2.0
+  baseURL: https://your-idp.example.com
+  tags:
+  - Token
+  properties:
+  - type: OpenAPI
+    url: openapi/sso-token-api-openapi.yml
+  - type: Documentation
+    url: https://www.oasis-open.org/standards#samlv2.0
+  - type: Documentation
+    url: https://wiki.oasis-open.org/security/FrontPage
+  - type: Documentation
+    url: https://openid.net/connect/
+  - type: Specification
+    url: https://openid.net/developers/specs/
+- aid: sso:sso-user-info-api
+  name: SSO User Info API
+  description: UserInfo endpoint for retrieving authenticated user profile claims.
+  humanURL: https://www.oasis-open.org/standards#samlv2.0
+  baseURL: https://your-idp.example.com
+  tags:
+  - User Info
+  properties:
+  - type: OpenAPI
+    url: openapi/sso-user-info-api-openapi.yml
+  - type: Documentation
+    url: https://www.oasis-open.org/standards#samlv2.0
+  - type: Documentation
+    url: https://wiki.oasis-open.org/security/FrontPage
+  - type: Documentation
+    url: https://openid.net/connect/
+  - type: Specification
+    url: https://openid.net/developers/specs/
 common:
   - type: AgenticAccess
     url: agentic-access/sso-agentic-access.yml
