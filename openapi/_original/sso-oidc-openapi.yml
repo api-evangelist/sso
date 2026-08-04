@@ -1,0 +1,632 @@
+openapi: 3.1.0
+info:
+  title: OpenID Connect (OIDC) SSO API
+  description: >-
+    The OpenID Connect (OIDC) API is a lightweight identity layer built on top
+    of OAuth 2.0 that enables applications to verify user identity and obtain
+    basic profile information. OIDC defines standard endpoints including the
+    Authorization Endpoint, Token Endpoint, UserInfo Endpoint, and JWKS URI.
+    It supports Authorization Code Flow, Implicit Flow, Hybrid Flow, and PKCE
+    extensions for public clients. OIDC is widely implemented by identity
+    providers including Okta, Microsoft Entra ID, Google, Auth0, and Keycloak.
+  version: '1.0'
+  contact:
+    name: OpenID Foundation
+    url: https://openid.net/connect/
+  termsOfService: https://openid.net/connect/
+externalDocs:
+  description: OpenID Connect Specification
+  url: https://openid.net/connect/
+servers:
+  - url: https://your-idp.example.com
+    description: OpenID Provider (OP) Server
+tags:
+  - name: Authorization
+    description: >-
+      OIDC authorization endpoints for initiating authentication flows and
+      exchanging authorization codes for tokens.
+  - name: Token
+    description: >-
+      Token endpoint operations for exchanging authorization codes and refresh
+      tokens for access tokens and ID tokens.
+  - name: User Info
+    description: >-
+      UserInfo endpoint for retrieving authenticated user profile claims.
+  - name: Discovery
+    description: >-
+      OpenID Provider Discovery endpoint for retrieving provider configuration
+      metadata.
+  - name: Keys
+    description: >-
+      JSON Web Key Set (JWKS) endpoint for retrieving public keys used to
+      verify ID token signatures.
+paths:
+  /authorize:
+    get:
+      operationId: initiateOIDCAuthorization
+      summary: Initiate OIDC Authorization
+      description: >-
+        Initiates an OpenID Connect authorization flow. The client redirects
+        the user to this endpoint with the required parameters. On successful
+        authentication, the OpenID Provider redirects back to the client's
+        redirect_uri with an authorization code (Authorization Code Flow) or
+        tokens (Implicit Flow).
+      tags:
+        - Authorization
+      parameters:
+        - name: response_type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - code
+              - token
+              - id_token
+              - 'code token'
+              - 'code id_token'
+              - 'token id_token'
+              - 'code token id_token'
+          description: >-
+            Specifies the authorization flow. Use 'code' for Authorization
+            Code Flow, 'id_token' for Implicit Flow.
+        - name: client_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The client identifier registered with the OpenID Provider
+        - name: redirect_uri
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uri
+          description: >-
+            URI to redirect to after authentication. Must match a pre-registered
+            redirect URI for the client.
+        - name: scope
+          in: query
+          required: true
+          schema:
+            type: string
+          description: >-
+            Space-separated list of scopes. Must include 'openid'. Additional
+            scopes: profile, email, address, phone, offline_access.
+          example: 'openid profile email'
+        - name: state
+          in: query
+          required: true
+          schema:
+            type: string
+          description: >-
+            Opaque value used to maintain state between the request and callback.
+            Used to prevent CSRF attacks.
+        - name: nonce
+          in: query
+          schema:
+            type: string
+          description: >-
+            String value used to associate a client session with an ID token
+            and mitigate replay attacks.
+        - name: code_challenge
+          in: query
+          schema:
+            type: string
+          description: >-
+            PKCE code challenge derived from the code_verifier. Required for
+            public clients using PKCE.
+        - name: code_challenge_method
+          in: query
+          schema:
+            type: string
+            enum:
+              - S256
+              - plain
+          description: Method used to derive the code_challenge from code_verifier
+        - name: response_mode
+          in: query
+          schema:
+            type: string
+            enum:
+              - query
+              - fragment
+              - form_post
+          description: Mechanism used to return authorization response parameters
+        - name: prompt
+          in: query
+          schema:
+            type: string
+            enum:
+              - none
+              - login
+              - consent
+              - select_account
+          description: Prompts for user interaction during authentication
+        - name: login_hint
+          in: query
+          schema:
+            type: string
+          description: Hint to the authorization server about the login identifier
+        - name: acr_values
+          in: query
+          schema:
+            type: string
+          description: Authentication Context Class Reference values
+      responses:
+        '302':
+          description: Redirect to redirect_uri with authorization code or tokens
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+              description: >-
+                Redirect URL with code and state parameters (Authorization Code
+                Flow) or tokens in fragment (Implicit Flow)
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /token:
+    post:
+      operationId: exchangeToken
+      summary: Exchange Authorization Code for Tokens
+      description: >-
+        Exchanges an authorization code for an access token, ID token, and
+        optionally a refresh token. Also used to refresh expired access tokens
+        using a refresh token. Supports client_secret_basic and
+        client_secret_post authentication methods.
+      tags:
+        - Token
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - grant_type
+              properties:
+                grant_type:
+                  type: string
+                  enum:
+                    - authorization_code
+                    - refresh_token
+                    - client_credentials
+                  description: The grant type for the token request
+                code:
+                  type: string
+                  description: >-
+                    Authorization code received from the authorization endpoint.
+                    Required for authorization_code grant.
+                redirect_uri:
+                  type: string
+                  format: uri
+                  description: >-
+                    Must match the redirect_uri used in the authorization request.
+                    Required for authorization_code grant.
+                client_id:
+                  type: string
+                  description: >-
+                    Client identifier. Required for client_secret_post
+                    authentication.
+                client_secret:
+                  type: string
+                  description: >-
+                    Client secret. Required for client_secret_post
+                    authentication.
+                code_verifier:
+                  type: string
+                  description: >-
+                    PKCE code verifier. Required when code_challenge was used
+                    in the authorization request.
+                refresh_token:
+                  type: string
+                  description: >-
+                    Refresh token for obtaining new access tokens. Required
+                    for refresh_token grant.
+                scope:
+                  type: string
+                  description: >-
+                    Optional scope for refresh_token grant. Must be a subset
+                    of originally granted scopes.
+      responses:
+        '200':
+          description: Token response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Invalid token request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Client authentication failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /userinfo:
+    get:
+      operationId: getUserInfo
+      summary: Get User Info
+      description: >-
+        Returns claims about the authenticated user. The access token is passed
+        as a Bearer token in the Authorization header. The claims returned
+        depend on the scopes granted during authorization.
+      tags:
+        - User Info
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile claims
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfoResponse'
+        '401':
+          description: Invalid or expired access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      operationId: getUserInfoPost
+      summary: Get User Info (POST)
+      description: >-
+        Returns claims about the authenticated user via POST request. The
+        access token is passed as a Bearer token in the Authorization header.
+      tags:
+        - User Info
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile claims
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfoResponse'
+        '401':
+          description: Invalid or expired access token
+  /.well-known/openid-configuration:
+    get:
+      operationId: getOIDCDiscovery
+      summary: Get OpenID Provider Configuration
+      description: >-
+        Returns the OpenID Provider's configuration metadata as defined in
+        RFC 8414 (OAuth 2.0 Authorization Server Metadata) and the OIDC
+        Discovery specification. Clients use this endpoint to discover all
+        required endpoints, supported features, and public keys.
+      tags:
+        - Discovery
+      responses:
+        '200':
+          description: OpenID Provider configuration metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OIDCConfiguration'
+  /jwks:
+    get:
+      operationId: getJWKS
+      summary: Get JSON Web Key Set
+      description: >-
+        Returns the JSON Web Key Set (JWKS) containing the public keys used
+        by the OpenID Provider to sign ID tokens and other JWTs. Clients use
+        these keys to verify the signature of ID tokens received from the
+        token endpoint.
+      tags:
+        - Keys
+      responses:
+        '200':
+          description: JSON Web Key Set
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWKSResponse'
+  /revoke:
+    post:
+      operationId: revokeToken
+      summary: Revoke Token
+      description: >-
+        Revokes an access token or refresh token. The token is immediately
+        invalidated and can no longer be used for API access or token refresh.
+      tags:
+        - Token
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+                  description: The access token or refresh token to revoke
+                token_type_hint:
+                  type: string
+                  enum:
+                    - access_token
+                    - refresh_token
+                  description: Optional hint about the token type being revoked
+                client_id:
+                  type: string
+                  description: Client identifier
+                client_secret:
+                  type: string
+                  description: Client secret
+      responses:
+        '200':
+          description: Token successfully revoked (or was already invalid)
+        '400':
+          description: Invalid revocation request
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth 2.0 Bearer access token in Authorization header
+  schemas:
+    TokenResponse:
+      type: object
+      required:
+        - access_token
+        - token_type
+      properties:
+        access_token:
+          type: string
+          description: OAuth 2.0 access token for API access
+        token_type:
+          type: string
+          enum:
+            - Bearer
+          description: Token type (always Bearer)
+        id_token:
+          type: string
+          description: >-
+            JWT-encoded ID token containing authenticated user claims. Present
+            for requests that included 'openid' scope.
+        refresh_token:
+          type: string
+          description: >-
+            Refresh token for obtaining new access tokens without re-
+            authentication. Present when offline_access scope was granted.
+        expires_in:
+          type: integer
+          description: Number of seconds until the access token expires
+        scope:
+          type: string
+          description: Space-separated list of scopes granted by the authorization server
+    UserInfoResponse:
+      type: object
+      properties:
+        sub:
+          type: string
+          description: Subject identifier - unique identifier for the user at the OP
+        name:
+          type: string
+          description: User's full name
+        given_name:
+          type: string
+          description: User's given (first) name
+        family_name:
+          type: string
+          description: User's family (last) name
+        middle_name:
+          type: string
+          description: User's middle name
+        nickname:
+          type: string
+          description: User's casual name
+        preferred_username:
+          type: string
+          description: Shorthand name for the user (username, handle)
+        profile:
+          type: string
+          format: uri
+          description: URL of the user's profile page
+        picture:
+          type: string
+          format: uri
+          description: URL of the user's profile picture
+        website:
+          type: string
+          format: uri
+          description: URL of the user's website
+        email:
+          type: string
+          format: email
+          description: User's email address
+        email_verified:
+          type: boolean
+          description: Whether the email has been verified
+        gender:
+          type: string
+          description: User's gender
+        birthdate:
+          type: string
+          description: User's birthdate in ISO 8601 format
+        zoneinfo:
+          type: string
+          description: User's time zone identifier
+        locale:
+          type: string
+          description: User's locale (BCP47 language tag)
+        phone_number:
+          type: string
+          description: User's phone number in E.164 format
+        phone_number_verified:
+          type: boolean
+          description: Whether the phone number has been verified
+        address:
+          type: object
+          description: User's address
+          properties:
+            formatted:
+              type: string
+            street_address:
+              type: string
+            locality:
+              type: string
+            region:
+              type: string
+            postal_code:
+              type: string
+            country:
+              type: string
+        updated_at:
+          type: integer
+          description: Unix timestamp of last profile update
+    OIDCConfiguration:
+      type: object
+      required:
+        - issuer
+        - authorization_endpoint
+        - token_endpoint
+        - jwks_uri
+        - response_types_supported
+        - subject_types_supported
+        - id_token_signing_alg_values_supported
+      properties:
+        issuer:
+          type: string
+          format: uri
+          description: URL of the OpenID Provider's issuer identifier
+        authorization_endpoint:
+          type: string
+          format: uri
+          description: URL of the authorization endpoint
+        token_endpoint:
+          type: string
+          format: uri
+          description: URL of the token endpoint
+        userinfo_endpoint:
+          type: string
+          format: uri
+          description: URL of the UserInfo endpoint
+        jwks_uri:
+          type: string
+          format: uri
+          description: URL of the JWKS endpoint
+        registration_endpoint:
+          type: string
+          format: uri
+          description: URL of the dynamic client registration endpoint
+        scopes_supported:
+          type: array
+          items:
+            type: string
+          description: Supported OAuth 2.0 scopes
+        response_types_supported:
+          type: array
+          items:
+            type: string
+          description: Supported OAuth 2.0 response types
+        grant_types_supported:
+          type: array
+          items:
+            type: string
+          description: Supported OAuth 2.0 grant types
+        subject_types_supported:
+          type: array
+          items:
+            type: string
+          description: Supported subject identifier types (public, pairwise)
+        id_token_signing_alg_values_supported:
+          type: array
+          items:
+            type: string
+          description: Supported JWS signing algorithms for ID tokens
+        token_endpoint_auth_methods_supported:
+          type: array
+          items:
+            type: string
+          description: Supported client authentication methods
+        claims_supported:
+          type: array
+          items:
+            type: string
+          description: Supported claims in ID tokens and UserInfo responses
+        code_challenge_methods_supported:
+          type: array
+          items:
+            type: string
+          description: Supported PKCE code challenge methods
+        revocation_endpoint:
+          type: string
+          format: uri
+          description: URL of the token revocation endpoint
+    JWKSResponse:
+      type: object
+      required:
+        - keys
+      properties:
+        keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/JWK'
+    JWK:
+      type: object
+      description: JSON Web Key for verifying token signatures
+      required:
+        - kty
+      properties:
+        kty:
+          type: string
+          description: Key type (RSA, EC, oct)
+          example: RSA
+        use:
+          type: string
+          enum:
+            - sig
+            - enc
+          description: Intended use of the key
+        kid:
+          type: string
+          description: Key identifier
+        alg:
+          type: string
+          description: Algorithm intended for use with this key
+          example: RS256
+        n:
+          type: string
+          description: RSA modulus (base64url-encoded)
+        e:
+          type: string
+          description: RSA public exponent (base64url-encoded)
+        x5c:
+          type: array
+          items:
+            type: string
+          description: X.509 certificate chain
+        x5t:
+          type: string
+          description: X.509 certificate SHA-1 thumbprint
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: >-
+            Error code as defined in RFC 6749 (e.g., invalid_request,
+            invalid_client, invalid_grant, unauthorized_client,
+            unsupported_grant_type, invalid_scope)
+        error_description:
+          type: string
+          description: Human-readable error description
+        error_uri:
+          type: string
+          format: uri
+          description: URI of a web page with more information about the error

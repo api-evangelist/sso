@@ -1,0 +1,28 @@
+{
+  "provider": "sso",
+  "sources": [
+    "sso-authentication-api-openapi.yml",
+    "sso-authorization-api-openapi.yml",
+    "sso-discovery-api-openapi.yml",
+    "sso-keys-api-openapi.yml",
+    "sso-logout-api-openapi.yml",
+    "sso-metadata-api-openapi.yml",
+    "sso-token-api-openapi.yml",
+    "sso-user-info-api-openapi.yml"
+  ],
+  "outputs": [
+    "sso-authentication-api-openapi.yml",
+    "sso-authorization-api-openapi.yml",
+    "sso-discovery-api-openapi.yml",
+    "sso-keys-api-openapi.yml",
+    "sso-logout-api-openapi.yml",
+    "sso-metadata-api-openapi.yml",
+    "sso-token-api-openapi.yml",
+    "sso-user-info-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

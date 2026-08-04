@@ -1,0 +1,280 @@
+openapi: 3.1.0
+info:
+  title: SAML 2.0 SSO API
+  description: >-
+    The SAML 2.0 Single Sign-On API enables service providers and identity
+    providers to exchange authentication assertions via XML-signed messages.
+    SAML 2.0 (Security Assertion Markup Language) is an XML-based open standard
+    for exchanging authentication and authorization data between identity
+    providers (IdP) and service providers (SP). It supports HTTP Redirect
+    Binding and HTTP POST Binding for AuthnRequest and Response flows, Assertion
+    Consumer Service (ACS) endpoints, Single Logout (SLO), and IdP metadata
+    retrieval as defined by OASIS SAML 2.0.
+  version: '2.0'
+  contact:
+    name: OASIS SAML Working Group
+    url: https://wiki.oasis-open.org/security/FrontPage
+  termsOfService: https://www.oasis-open.org/policies-guidelines/ipr/
+externalDocs:
+  description: OASIS SAML 2.0 Specification
+  url: https://www.oasis-open.org/standards#samlv2.0
+servers:
+  - url: https://your-idp.example.com
+    description: Identity Provider (IdP) Server
+tags:
+  - name: Authentication
+    description: >-
+      SAML 2.0 authentication request and response endpoints for initiating
+      and completing SSO login flows.
+  - name: Logout
+    description: >-
+      SAML 2.0 Single Logout (SLO) endpoints for terminating SSO sessions
+      across all service providers.
+  - name: Metadata
+    description: >-
+      SAML 2.0 metadata endpoints for exchanging federation configuration
+      between identity providers and service providers.
+paths:
+  /saml/sso:
+    get:
+      operationId: initiateSAMLLogin
+      summary: Initiate SAML SSO Login
+      description: >-
+        Initiates a SAML 2.0 Single Sign-On login flow via HTTP Redirect
+        Binding. The identity provider receives a SAMLRequest parameter
+        containing a base64-encoded and deflated AuthnRequest XML document.
+        On successful authentication, the IdP redirects back to the SP's
+        Assertion Consumer Service (ACS) URL with a SAMLResponse.
+      tags:
+        - Authentication
+      parameters:
+        - name: SAMLRequest
+          in: query
+          required: true
+          schema:
+            type: string
+          description: >-
+            Base64-encoded and URL-encoded deflated AuthnRequest XML document
+        - name: RelayState
+          in: query
+          schema:
+            type: string
+          description: >-
+            An opaque value used to maintain state between the request and
+            callback. The SP includes this value and the IdP passes it back
+            unchanged.
+        - name: SigAlg
+          in: query
+          schema:
+            type: string
+          description: >-
+            The algorithm used to sign the request, required when using
+            HTTP Redirect Binding with signatures.
+          example: 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256'
+        - name: Signature
+          in: query
+          schema:
+            type: string
+          description: >-
+            Base64-encoded signature of the request, required when using
+            signed HTTP Redirect Binding.
+      responses:
+        '302':
+          description: Redirect to service provider ACS with SAMLResponse
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+              description: >-
+                Redirect URL containing SAMLResponse and RelayState parameters
+        '400':
+          description: Invalid SAMLRequest or missing required parameters
+          content:
+            text/html:
+              schema:
+                type: string
+    post:
+      operationId: receiveSAMLResponse
+      summary: Receive SAML Assertion Consumer Service
+      description: >-
+        Assertion Consumer Service (ACS) endpoint for receiving SAML 2.0
+        responses from the identity provider via HTTP POST Binding. The SP
+        receives a base64-encoded SAMLResponse containing a signed SAML
+        assertion, validates the signature and assertion, and establishes a
+        session for the authenticated user.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - SAMLResponse
+              properties:
+                SAMLResponse:
+                  type: string
+                  description: >-
+                    Base64-encoded SAML Response XML document containing the
+                    authentication assertion signed by the IdP.
+                RelayState:
+                  type: string
+                  description: >-
+                    Opaque value originally sent in the AuthnRequest and
+                    returned unchanged by the IdP.
+      responses:
+        '302':
+          description: Successful authentication - redirect to target resource
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+              description: Redirect URL to the originally requested resource
+            Set-Cookie:
+              schema:
+                type: string
+              description: Session cookie for the authenticated user
+        '401':
+          description: Authentication failed - invalid or expired assertion
+          content:
+            text/html:
+              schema:
+                type: string
+  /saml/logout:
+    get:
+      operationId: initiateSAMLLogout
+      summary: Initiate SAML Single Logout
+      description: >-
+        Initiates a SAML 2.0 Single Logout (SLO) flow via HTTP Redirect
+        Binding. Sends a LogoutRequest to the identity provider to terminate
+        the SSO session. The IdP propagates the logout to all other service
+        providers in the SSO session.
+      tags:
+        - Logout
+      parameters:
+        - name: SAMLRequest
+          in: query
+          schema:
+            type: string
+          description: Base64-encoded deflated LogoutRequest XML
+        - name: SAMLResponse
+          in: query
+          schema:
+            type: string
+          description: Base64-encoded deflated LogoutResponse XML from IdP
+        - name: RelayState
+          in: query
+          schema:
+            type: string
+          description: Opaque state value
+        - name: SigAlg
+          in: query
+          schema:
+            type: string
+          description: Signature algorithm URI
+        - name: Signature
+          in: query
+          schema:
+            type: string
+          description: Base64-encoded request signature
+      responses:
+        '302':
+          description: Redirect after logout processing
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+            Set-Cookie:
+              schema:
+                type: string
+              description: Session cookie deletion
+        '400':
+          description: Invalid logout request
+  /saml/metadata:
+    get:
+      operationId: getSAMLMetadata
+      summary: Get SAML Metadata
+      description: >-
+        Returns the SAML 2.0 metadata XML document for this identity provider
+        or service provider. The metadata document contains entity ID, SSO
+        binding endpoints, certificate for signature verification, and
+        supported NameID formats required for federation configuration.
+      tags:
+        - Metadata
+      responses:
+        '200':
+          description: SAML 2.0 metadata XML document
+          content:
+            application/samlmetadata+xml:
+              schema:
+                type: string
+                description: SAML 2.0 EntityDescriptor XML metadata document
+            application/xml:
+              schema:
+                type: string
+                description: SAML 2.0 EntityDescriptor XML metadata document
+        '404':
+          description: Metadata not available
+components:
+  schemas:
+    SAMLAssertion:
+      type: object
+      description: Represents the decoded content of a SAML 2.0 Assertion
+      properties:
+        issuer:
+          type: string
+          description: Entity ID of the identity provider that issued the assertion
+        subject:
+          type: object
+          properties:
+            nameId:
+              type: string
+              description: The NameID identifying the authenticated user
+            nameIdFormat:
+              type: string
+              description: Format URI specifying how to interpret the NameID
+              example: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'
+        conditions:
+          type: object
+          properties:
+            notBefore:
+              type: string
+              format: date-time
+              description: Earliest time the assertion is valid
+            notOnOrAfter:
+              type: string
+              format: date-time
+              description: Expiration time of the assertion
+            audienceRestriction:
+              type: string
+              description: Entity ID of the intended recipient (SP)
+        attributes:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Attribute name
+              values:
+                type: array
+                items:
+                  type: string
+                description: Attribute values
+        authnStatement:
+          type: object
+          properties:
+            authnInstant:
+              type: string
+              format: date-time
+              description: When the authentication occurred
+            sessionIndex:
+              type: string
+              description: Session identifier for use in Single Logout
+            authnContext:
+              type: string
+              description: Authentication context class reference
