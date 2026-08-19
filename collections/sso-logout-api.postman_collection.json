@@ -1,0 +1,207 @@
+{
+  "item": [
+    {
+      "id": "2522fd4f-0202-4d5b-9226-ad096b47e134",
+      "name": "Logout",
+      "description": {
+        "content": "SAML 2.0 Single Logout (SLO) endpoints for terminating SSO sessions across all service providers.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "7744ba4a-ffe3-45dd-b434-97646b6823cf",
+          "name": "Initiate SAML Single Logout",
+          "request": {
+            "name": "Initiate SAML Single Logout",
+            "description": {
+              "content": "Initiates a SAML 2.0 Single Logout (SLO) flow via HTTP Redirect Binding. Sends a LogoutRequest to the identity provider to terminate the SSO session. The IdP propagates the logout to all other service providers in the SSO session.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "saml",
+                "logout"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "SAMLRequest",
+                  "value": "<string>",
+                  "description": "Base64-encoded deflated LogoutRequest XML"
+                },
+                {
+                  "disabled": false,
+                  "key": "SAMLResponse",
+                  "value": "<string>",
+                  "description": "Base64-encoded deflated LogoutResponse XML from IdP"
+                },
+                {
+                  "disabled": false,
+                  "key": "RelayState",
+                  "value": "<string>",
+                  "description": "Opaque state value"
+                },
+                {
+                  "disabled": false,
+                  "key": "SigAlg",
+                  "value": "<string>",
+                  "description": "Signature algorithm URI"
+                },
+                {
+                  "disabled": false,
+                  "key": "Signature",
+                  "value": "<string>",
+                  "description": "Base64-encoded request signature"
+                }
+              ],
+              "variable": []
+            },
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "6e4c703d-b0e2-47d9-b951-822734ff42cd",
+              "name": "Redirect after logout processing",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "saml",
+                    "logout"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "SAMLRequest",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "SAMLResponse",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "RelayState",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "SigAlg",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "Signature",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Found",
+              "code": 302,
+              "header": [
+                {
+                  "disabled": false,
+                  "key": "Location",
+                  "value": "https://eJcrwHwwXmmsYAEySbQNVwPCNfKOl.wicmvnfLJKvY93pvDznEClm0eHYHxCajJv9ufV.srtoX0UhTi",
+                  "description": ""
+                },
+                {
+                  "disabled": false,
+                  "description": "Session cookie deletion",
+                  "key": "Set-Cookie",
+                  "value": "string"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "3f25bd30-0247-4ba3-a8f4-5bbee7438fb3",
+              "name": "Invalid logout request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "saml",
+                    "logout"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "SAMLRequest",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "SAMLResponse",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "RelayState",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "SigAlg",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "Signature",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://your-idp.example.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "20d62b01-01c2-487a-b1d0-27de8c9036a2",
+    "name": "OpenID Connect (OIDC) SSO Authentication Logout API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The OpenID Connect (OIDC) API is a lightweight identity layer built on top of OAuth 2.0 that enables applications to verify user identity and obtain basic profile information. OIDC defines standard endpoints including the Authorization Endpoint, Token Endpoint, UserInfo Endpoint, and JWKS URI. It supports Authorization Code Flow, Implicit Flow, Hybrid Flow, and PKCE extensions for public clients. OIDC is widely implemented by identity providers including Okta, Microsoft Entra ID, Google, Auth0, and Keycloak.\n\nContact Support:\n Name: OpenID Foundation",
+      "type": "text/plain"
+    }
+  }
+}

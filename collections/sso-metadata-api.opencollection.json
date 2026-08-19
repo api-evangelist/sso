@@ -1,0 +1,29 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "OpenID Connect (OIDC) SSO Authentication Metadata API",
+    "version": "1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Metadata",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get SAML Metadata",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://your-idp.example.com/saml/metadata"
+          },
+          "docs": "Returns the SAML 2.0 metadata XML document for this identity provider or service provider. The metadata document contains entity ID, SSO binding endpoints, certificate for signature verification, and supported NameID formats required for federation configuration."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

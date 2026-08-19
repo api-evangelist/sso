@@ -1,0 +1,29 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "OpenID Connect (OIDC) SSO Authentication Discovery API",
+    "version": "1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Discovery",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get OpenID Provider Configuration",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://your-idp.example.com/.well-known/openid-configuration"
+          },
+          "docs": "Returns the OpenID Provider's configuration metadata as defined in RFC 8414 (OAuth 2.0 Authorization Server Metadata) and the OIDC Discovery specification. Clients use this endpoint to discover all required endpoints, supported features, and public keys."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,104 @@
+{
+  "item": [
+    {
+      "id": "3774d329-0bf4-41dc-9697-407262f3d161",
+      "name": "Discovery",
+      "description": {
+        "content": "OpenID Provider Discovery endpoint for retrieving provider configuration metadata.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "9d15f368-0716-4e00-8b05-22b5ff20e7bb",
+          "name": "Get OpenID Provider Configuration",
+          "request": {
+            "name": "Get OpenID Provider Configuration",
+            "description": {
+              "content": "Returns the OpenID Provider's configuration metadata as defined in RFC 8414 (OAuth 2.0 Authorization Server Metadata) and the OIDC Discovery specification. Clients use this endpoint to discover all required endpoints, supported features, and public keys.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                ".well-known",
+                "openid-configuration"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "ffcca107-9784-4f51-8603-b00bb3e3729d",
+              "name": "OpenID Provider configuration metadata",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    ".well-known",
+                    "openid-configuration"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"issuer\": \"https://nhUHRKJgEhNFEQCzNbg.gaqx+.boh.s138hU37c1KVwLf3Op9PDjTgs+jEmBqLYsvcR2nG7\",\n  \"authorization_endpoint\": \"https://UcWTGehBKXjlrtZlmCYBtiHGNsurnECdd.oolfSmJlONfbjeBd9UBXpTMqBk\",\n  \"token_endpoint\": \"https://CrnA.ipiTGwRSVFjIa.lRVGP.LYbYeN3Vd7BiSJGGfOx7eiPa9fHageAPD5t,xaMZ-FvtWTOZ75M\",\n  \"jwks_uri\": \"http://NwRXPy.zrymNegT3qsFeR72+LPI9o+k3wbJh+7.uCNiQkBq,lwvcuAjS,PavaPMd\",\n  \"response_types_supported\": [\n    \"string\",\n    \"string\"\n  ],\n  \"subject_types_supported\": [\n    \"string\",\n    \"string\"\n  ],\n  \"id_token_signing_alg_values_supported\": [\n    \"string\",\n    \"string\"\n  ],\n  \"userinfo_endpoint\": \"https://rkayhhGSKpJZNVmcPLe.aghlBHnGgoIyyhwLbXuRAW-xENUmClBoz+EzUJH2BkgapscdpGsWrX8FhEI9v8ahKS\",\n  \"registration_endpoint\": \"http://zIPDyaaBpaqRLdcWc.lrwd7xffO2Pxmg-wlATP3o5JZV8bf2VR.SX\",\n  \"scopes_supported\": [\n    \"string\",\n    \"string\"\n  ],\n  \"grant_types_supported\": [\n    \"string\",\n    \"string\"\n  ],\n  \"token_endpoint_auth_methods_supported\": [\n    \"string\",\n    \"string\"\n  ],\n  \"claims_supported\": [\n    \"string\",\n    \"string\"\n  ],\n  \"code_challenge_methods_supported\": [\n    \"string\",\n    \"string\"\n  ],\n  \"revocation_endpoint\": \"http://PPonNyaMFPwAxmIffceGvof.yhhnHwkJoa7rZwIHIjbOxaYy14PF0jx6cJ-K,EzoLvuXwOL\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://your-idp.example.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "955d95fb-d6ef-4ccd-9398-8fbad20fe9a7",
+    "name": "OpenID Connect (OIDC) SSO Authentication Discovery API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The OpenID Connect (OIDC) API is a lightweight identity layer built on top of OAuth 2.0 that enables applications to verify user identity and obtain basic profile information. OIDC defines standard endpoints including the Authorization Endpoint, Token Endpoint, UserInfo Endpoint, and JWKS URI. It supports Authorization Code Flow, Implicit Flow, Hybrid Flow, and PKCE extensions for public clients. OIDC is widely implemented by identity providers including Okta, Microsoft Entra ID, Google, Auth0, and Keycloak.\n\nContact Support:\n Name: OpenID Foundation",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "OpenID Connect (OIDC) SSO Authentication API",
+    "version": "1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Authentication",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Initiate SAML SSO Login",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://your-idp.example.com/saml/sso",
+            "params": [
+              {
+                "name": "SAMLRequest",
+                "value": "",
+                "type": "query",
+                "description": "Base64-encoded and URL-encoded deflated AuthnRequest XML document"
+              },
+              {
+                "name": "RelayState",
+                "value": "",
+                "type": "query",
+                "description": "An opaque value used to maintain state between the request and callback. The SP includes this value and the IdP passes it back unchanged."
+              },
+              {
+                "name": "SigAlg",
+                "value": "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+                "type": "query",
+                "description": "The algorithm used to sign the request, required when using HTTP Redirect Binding with signatures."
+              },
+              {
+                "name": "Signature",
+                "value": "",
+                "type": "query",
+                "description": "Base64-encoded signature of the request, required when using signed HTTP Redirect Binding."
+              }
+            ]
+          },
+          "docs": "Initiates a SAML 2.0 Single Sign-On login flow via HTTP Redirect Binding. The identity provider receives a SAMLRequest parameter containing a base64-encoded and deflated AuthnRequest XML document. On successful authentication, the IdP redirects back to the SP's Assertion Consumer Service (ACS) URL with a SAMLResponse."
+        },
+        {
+          "info": {
+            "name": "Receive SAML Assertion Consumer Service",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://your-idp.example.com/saml/sso",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "SAMLResponse",
+                  "value": ""
+                },
+                {
+                  "name": "RelayState",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Assertion Consumer Service (ACS) endpoint for receiving SAML 2.0 responses from the identity provider via HTTP POST Binding. The SP receives a base64-encoded SAMLResponse containing a signed SAML assertion, validates the signature and assertion, and establishes a session for the authenticated user."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

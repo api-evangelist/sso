@@ -1,0 +1,308 @@
+{
+  "item": [
+    {
+      "id": "c0494f4c-21b8-4c96-82e2-46a76546edeb",
+      "name": "Authorization",
+      "description": {
+        "content": "OIDC authorization endpoints for initiating authentication flows and exchanging authorization codes for tokens.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "6a2fb43d-44b6-4da1-9cfd-ae738bb4bc53",
+          "name": "Initiate OIDC Authorization",
+          "request": {
+            "name": "Initiate OIDC Authorization",
+            "description": {
+              "content": "Initiates an OpenID Connect authorization flow. The client redirects the user to this endpoint with the required parameters. On successful authentication, the OpenID Provider redirects back to the client's redirect_uri with an authorization code (Authorization Code Flow) or tokens (Implicit Flow).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "authorize"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "response_type",
+                  "value": "<string>",
+                  "description": "(Required) Specifies the authorization flow. Use 'code' for Authorization Code Flow, 'id_token' for Implicit Flow."
+                },
+                {
+                  "disabled": false,
+                  "key": "client_id",
+                  "value": "<string>",
+                  "description": "(Required) The client identifier registered with the OpenID Provider"
+                },
+                {
+                  "disabled": false,
+                  "key": "redirect_uri",
+                  "value": "<uri>",
+                  "description": "(Required) URI to redirect to after authentication. Must match a pre-registered redirect URI for the client."
+                },
+                {
+                  "disabled": false,
+                  "key": "scope",
+                  "value": "<string>",
+                  "description": "(Required) Space-separated list of scopes. Must include 'openid'. Additional scopes: profile, email, address, phone, offline_access."
+                },
+                {
+                  "disabled": false,
+                  "key": "state",
+                  "value": "<string>",
+                  "description": "(Required) Opaque value used to maintain state between the request and callback. Used to prevent CSRF attacks."
+                },
+                {
+                  "disabled": false,
+                  "key": "nonce",
+                  "value": "<string>",
+                  "description": "String value used to associate a client session with an ID token and mitigate replay attacks."
+                },
+                {
+                  "disabled": false,
+                  "key": "code_challenge",
+                  "value": "<string>",
+                  "description": "PKCE code challenge derived from the code_verifier. Required for public clients using PKCE."
+                },
+                {
+                  "disabled": false,
+                  "key": "code_challenge_method",
+                  "value": "<string>",
+                  "description": "Method used to derive the code_challenge from code_verifier"
+                },
+                {
+                  "disabled": false,
+                  "key": "response_mode",
+                  "value": "<string>",
+                  "description": "Mechanism used to return authorization response parameters"
+                },
+                {
+                  "disabled": false,
+                  "key": "prompt",
+                  "value": "<string>",
+                  "description": "Prompts for user interaction during authentication"
+                },
+                {
+                  "disabled": false,
+                  "key": "login_hint",
+                  "value": "<string>",
+                  "description": "Hint to the authorization server about the login identifier"
+                },
+                {
+                  "disabled": false,
+                  "key": "acr_values",
+                  "value": "<string>",
+                  "description": "Authentication Context Class Reference values"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "f00578cd-9ece-4205-b0e9-9fcc1df65dd5",
+              "name": "Redirect to redirect_uri with authorization code or tokens",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "authorize"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "response_type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "client_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "redirect_uri",
+                      "value": "<uri>"
+                    },
+                    {
+                      "key": "scope",
+                      "value": "openid profile email"
+                    },
+                    {
+                      "key": "state",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "nonce",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "code_challenge",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "code_challenge_method",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "response_mode",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "prompt",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "login_hint",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "acr_values",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Found",
+              "code": 302,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Redirect URL with code and state parameters (Authorization Code Flow) or tokens in fragment (Implicit Flow)",
+                  "key": "Location",
+                  "value": "https://sDeaiCpetUBKVarambsRwIrxUcpLdTFAa.ezyxnZMxYXtE3fbLMyx9J"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "d1f74a9d-7523-4d23-b699-d50ed3b3ef65",
+              "name": "Invalid request parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "authorize"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "response_type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "client_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "redirect_uri",
+                      "value": "<uri>"
+                    },
+                    {
+                      "key": "scope",
+                      "value": "openid profile email"
+                    },
+                    {
+                      "key": "state",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "nonce",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "code_challenge",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "code_challenge_method",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "response_mode",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "prompt",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "login_hint",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "acr_values",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"error_description\": \"string\",\n  \"error_uri\": \"http://TShvhjvVqzvEETdTCUyDEzNr.yjEAKWWejzI,JCD.Rbk5B3\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://your-idp.example.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "ed663e60-178a-4c67-8f4f-81d3b0ed00f2",
+    "name": "OpenID Connect (OIDC) SSO Authentication Authorization API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The OpenID Connect (OIDC) API is a lightweight identity layer built on top of OAuth 2.0 that enables applications to verify user identity and obtain basic profile information. OIDC defines standard endpoints including the Authorization Endpoint, Token Endpoint, UserInfo Endpoint, and JWKS URI. It supports Authorization Code Flow, Implicit Flow, Hybrid Flow, and PKCE extensions for public clients. OIDC is widely implemented by identity providers including Okta, Microsoft Entra ID, Google, Auth0, and Keycloak.\n\nContact Support:\n Name: OpenID Foundation",
+      "type": "text/plain"
+    }
+  }
+}

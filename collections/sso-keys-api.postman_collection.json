@@ -1,0 +1,102 @@
+{
+  "item": [
+    {
+      "id": "f0c87389-3350-46f6-bb7c-c12c9e037e59",
+      "name": "Keys",
+      "description": {
+        "content": "JSON Web Key Set (JWKS) endpoint for retrieving public keys used to verify ID token signatures.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "899bbad9-96d0-4bd0-b29c-f9c4af423a06",
+          "name": "Get JSON Web Key Set",
+          "request": {
+            "name": "Get JSON Web Key Set",
+            "description": {
+              "content": "Returns the JSON Web Key Set (JWKS) containing the public keys used by the OpenID Provider to sign ID tokens and other JWTs. Clients use these keys to verify the signature of ID tokens received from the token endpoint.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "jwks"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "02429bc1-2944-4d5b-bfc2-17f7ca1a19c5",
+              "name": "JSON Web Key Set",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "jwks"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"keys\": [\n    {\n      \"kty\": \"RSA\",\n      \"use\": \"sig\",\n      \"kid\": \"string\",\n      \"alg\": \"RS256\",\n      \"n\": \"string\",\n      \"e\": \"string\",\n      \"x5c\": [\n        \"string\",\n        \"string\"\n      ],\n      \"x5t\": \"string\"\n    },\n    {\n      \"kty\": \"RSA\",\n      \"use\": \"enc\",\n      \"kid\": \"string\",\n      \"alg\": \"RS256\",\n      \"n\": \"string\",\n      \"e\": \"string\",\n      \"x5c\": [\n        \"string\",\n        \"string\"\n      ],\n      \"x5t\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://your-idp.example.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "414f4b16-ea16-49e1-9201-ec1464d54763",
+    "name": "OpenID Connect (OIDC) SSO Authentication Keys API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The OpenID Connect (OIDC) API is a lightweight identity layer built on top of OAuth 2.0 that enables applications to verify user identity and obtain basic profile information. OIDC defines standard endpoints including the Authorization Endpoint, Token Endpoint, UserInfo Endpoint, and JWKS URI. It supports Authorization Code Flow, Implicit Flow, Hybrid Flow, and PKCE extensions for public clients. OIDC is widely implemented by identity providers including Okta, Microsoft Entra ID, Google, Auth0, and Keycloak.\n\nContact Support:\n Name: OpenID Foundation",
+      "type": "text/plain"
+    }
+  }
+}

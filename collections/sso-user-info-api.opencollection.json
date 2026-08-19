@@ -1,0 +1,48 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "OpenID Connect (OIDC) SSO Authentication User Info API",
+    "version": "1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "User Info",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get User Info",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://your-idp.example.com/userinfo",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns claims about the authenticated user. The access token is passed as a Bearer token in the Authorization header. The claims returned depend on the scopes granted during authorization."
+        },
+        {
+          "info": {
+            "name": "Get User Info (POST)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://your-idp.example.com/userinfo",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns claims about the authenticated user via POST request. The access token is passed as a Bearer token in the Authorization header."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

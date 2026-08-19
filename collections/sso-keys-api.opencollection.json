@@ -1,0 +1,29 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "OpenID Connect (OIDC) SSO Authentication Keys API",
+    "version": "1.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Keys",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get JSON Web Key Set",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://your-idp.example.com/jwks"
+          },
+          "docs": "Returns the JSON Web Key Set (JWKS) containing the public keys used by the OpenID Provider to sign ID tokens and other JWTs. Clients use these keys to verify the signature of ID tokens received from the token endpoint."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
