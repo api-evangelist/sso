@@ -25,6 +25,15 @@ tags:
   - Authentication
   - Authorization
   - Identity
+  - OIDC
+  - SAML
+  - Security
+  - Single Sign-On
+  - SSO
+tags_raw:
+  - Authentication
+  - Authorization
+  - Identity
   - OAuth
   - OIDC
   - SAML
@@ -175,6 +184,8 @@ apis:
   humanURL: https://www.oasis-open.org/standards#samlv2.0
   baseURL: https://your-idp.example.com
   tags:
+  - UserInfo
+  tags_raw:
   - User Info
   properties:
   - type: OpenAPI
